@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151110085248) do
+ActiveRecord::Schema.define(version: 20151110095639) do
 
   create_table "game_event_lists", force: :cascade do |t|
     t.integer "game_id", limit: 4
@@ -78,6 +78,22 @@ ActiveRecord::Schema.define(version: 20151110085248) do
     t.integer "segment_length",    limit: 4,               null: false
   end
 
+  create_table "matches", force: :cascade do |t|
+    t.boolean "started",             default: false, null: false
+    t.boolean "concluded",           default: false, null: false
+    t.integer "game_id",   limit: 4
+  end
+
+  add_index "matches", ["game_id"], name: "index_matches_on_game_id", using: :btree
+
+  create_table "matches_users", force: :cascade do |t|
+    t.integer "user_id",  limit: 4
+    t.integer "match_id", limit: 4
+  end
+
+  add_index "matches_users", ["match_id"], name: "index_matches_users_on_match_id", using: :btree
+  add_index "matches_users", ["user_id"], name: "index_matches_users_on_user_id", using: :btree
+
   create_table "player_action_types", force: :cascade do |t|
     t.string "name",         limit: 255, null: false
     t.string "display_name", limit: 255, null: false
@@ -97,10 +113,10 @@ ActiveRecord::Schema.define(version: 20151110085248) do
 
   create_table "players", force: :cascade do |t|
     t.integer  "game_id",    limit: 4
-    t.integer  "resources",  limit: 8,   default: 1000,         null: false
-    t.string   "name",       limit: 255, default: "Player One", null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.integer  "resources",  limit: 8,   default: 1000, null: false
+    t.string   "username",   limit: 255,                null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
   add_index "players", ["game_id"], name: "index_players_on_game_id", using: :btree
@@ -145,6 +161,10 @@ ActiveRecord::Schema.define(version: 20151110085248) do
   add_index "troops", ["player_id"], name: "index_troops_on_player_id", using: :btree
   add_index "troops", ["troop_type_id"], name: "index_troops_on_troop_type_id", using: :btree
 
+  create_table "users", force: :cascade do |t|
+    t.string "username", limit: 255, null: false
+  end
+
   add_foreign_key "game_event_lists", "games"
   add_foreign_key "game_events", "game_event_lists"
   add_foreign_key "game_events", "players"
@@ -153,6 +173,9 @@ ActiveRecord::Schema.define(version: 20151110085248) do
   add_foreign_key "games", "maps"
   add_foreign_key "map_tower_spawns", "maps"
   add_foreign_key "map_troop_spawns", "maps"
+  add_foreign_key "matches", "games"
+  add_foreign_key "matches_users", "matches"
+  add_foreign_key "matches_users", "users"
   add_foreign_key "player_actions", "players"
   add_foreign_key "players", "games"
   add_foreign_key "towers", "players"

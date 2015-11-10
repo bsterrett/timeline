@@ -42,3 +42,9 @@ map_tower_spawn = MapTowerSpawn.create([
 map_troop_spawn = MapTroopSpawn.create([
   { map_id: 1, location: 9, position: 0 }
 ])
+
+users = User.create([
+  { username: 'ben_the_conqueror' },
+  { username: 'maverick' },
+  { username: 'bane' }
+])
