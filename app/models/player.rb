@@ -3,4 +3,5 @@ class Player < ActiveRecord::Base
 
   has_many :troops
   has_many :towers
+  has_many :game_events
 end
