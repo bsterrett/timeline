@@ -6,6 +6,7 @@ class CreateTowers < ActiveRecord::Migration
       t.integer :level, null: false, default: 0
       t.integer :location, null: false
       t.integer :position, null: false
+      t.decimal :health, precision: 11, scale: 10, default: 1.0, null: false
 
       t.timestamps null: false
     end

@@ -3,10 +3,11 @@ class GameRuleset
                 :max_resources,
                 :max_player_towers,
                 :max_troops,
-                :max_slices,
-                :slice_speed_modifier,
+                :max_frames,
+                :frame_speed_modifier,
                 :resource_speed_modifier,
                 :troop_speed_modifier,
                 :base_health_modifier,
-                :handshake_bounded_acausal_actions
+                :handshake_bounded_acausal_actions,
+                :rebase_to_oldest_frame_on_acausal_action
 end

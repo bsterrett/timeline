@@ -13,3 +13,30 @@
  *= require_tree .
  *= require_self
  */
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+.navbar-fixer {
+  min-height: 50px;
+}
+
+#ajax-test-helper-url, #ajax-test-helper-data {
+  min-width: 350px;
+}
+
+#ajax-helper-text-container p {
+  margin: 0 0 2px;
+}
+
+#ajax-helper-text-container p.acausal-game-event {
+  color: red;
+}
+
+#ajax-helper-text-navbar li.dropdown {
+  margin-left: 10px;
+}
+
+#ajax-helper-text-navbar {
+  padding: 0;
+}

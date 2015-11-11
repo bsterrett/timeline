@@ -22,25 +22,29 @@ game_statuses = GameStatus.create([
 ])
 
 troop_types = TroopType.create([
-  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 1, base_speed: 1 }
+  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 0, base_speed: 1 }
 ])
 
 tower_types = TowerType.create([
-  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 1, base_speed: 1 }
+  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 0, base_speed: 1 }
 ])
 
 maps = Map.create([
   { name: 'timeline', display_name: 'The Map', max_players: 2, max_player_towers: 3, segment_length: 10 }
 ])
 
-map_tower_spawn = MapTowerSpawn.create([
+map_tower_spawns = MapTowerSpawn.create([
   { map_id: 1, location: 1, position: 0 },
   { map_id: 1, location: 3, position: 1 },
   { map_id: 1, location: 5, position: 2 }
 ])
 
-map_troop_spawn = MapTroopSpawn.create([
+map_troop_spawns = MapTroopSpawn.create([
   { map_id: 1, location: 9, position: 0 }
+])
+
+map_base_spawns = MapBaseSpawn.create([
+  { map_id: 1, location: 0, position: 0 }
 ])
 
 users = User.create([

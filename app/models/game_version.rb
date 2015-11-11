@@ -1,8 +1,16 @@
 class GameVersion < ActiveRecord::Base
   belongs_to :game
 
-  def version
-    number
+  def increment_current_frame! count = 1
+    increment!(:current_frame, count)
   end
-  alias_method :verion_number, :version
+
+  def current_version
+    version
+  end
+  alias_method :number, :current_version
+
+  def frame
+    current_frame
+  end
 end

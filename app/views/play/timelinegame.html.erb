@@ -1,10 +1,76 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Timeline</title>
-</head>
-<body>
-  <h1>Timeline</h1>
-</body>
-</html>
+<div class="container">
+  <div class="row row-offcanvas row-offcanvas-right">
+    <div class="col-xs-12">
+      <p class="pull-right visible-xs">
+        <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+      </p>
+      <div class="row">
+        <% if @match %>
+        <div class="col-xs-6 col-lg-2">
+          <h3>Match</h3>
+          <p>Id: <%= @match.id %></p>
+          <p>Users: <%= @match.users.collect(&:id) %></p>
+          <p>Game: <%= @match.game.id %></p>
+        </div>
+        <% end %>
+        <% if @game %>
+        <div class="col-xs-6 col-lg-2">
+          <h3>Game</h3>
+          <p>Id: <%= @game.id %></p>
+          <p>Status: <%= @game.status %></p>
+          <p>Current frame: <%= @game.current_frame %></p>
+          <p>Current version: <%= @game.current_version %></p>
+          <p>Need rebase: <%= @game.require_advance_game_version? %></p>
+          <p>Players: <%= @game.players.collect(&:id) %></p>
+          <p>Map: <%= @game.map.id %></p>
+          <p>Total events: <%= @game.game_event_list.game_events.size %></p>
+        </div>
+        <% end %>
+        <% if @game and @game.game_event_list %>
+        <div class="col-xs-6 col-lg-2">
+          <h3>Game Event List</h3>
+          <p>Id: <%= @game.game_event_list.id %></p>
+          <p>Total events: <%= @game.game_event_list.game_events.size %></p>
+        </div>
+        <% end %>
+        <% if @game and @game.players and !@game.players.empty? %>
+          <% if @game.players.size > 2 %></div><hr><div class="row"><% end %>
+          <% @game.players.each_with_index do |player,i| %>
+            <div class="col-xs-6 col-lg-2">
+              <h3>Player</h3>
+              <p>Id: <%= player.id %></p>
+              <p>Username: <%= player.username %></p>
+              <p>Resources: <%= player.resources %></p>
+              <p>Troops: <%= player.troops.count %></p>
+              <p>Living: <%= player.troops.select{ health > 0.0 }.length %></p>
+              <p>Towers: <%= player.towers.count %></p>
+              <p>Living: <%= player.towers.select{ health > 0.0 }.length %></p>
+              <p>Base health: <%= player.bases.collect(&:health).collect(&:to_f) %></p>
+            </div>
+          <% if i%6 == 5 %></div><div class="row"><% end %>
+          <% end %>
+        <% end %>
+      </div>
+      <hr>
+      <div class="row">
+        <% if @game and @game.game_event_list and @game.game_event_list.game_events %>
+          <% @game.game_event_list.game_events.each_with_index do |game_event,i| %>
+          <div class="col-xs-4 col-lg-2">
+            <h4>Game Event</h4>
+            <p>Id: <%= game_event.id %></p>
+            <p>Player: <%= game_event.player.id %></p>
+            <% if game_event.causal? %>
+            <p>Causal: true</p>
+            <% else %>
+            <p class="acausal-game-event">Causal: false</p>
+            <% end %>
+            <p>Frame: <%= game_event.frame %></p>
+            <p>Acasual target frame: <%= game_event.acausal_target_frame %></p>
+          </div>
+          <% if i%6 == 5 %></div><div class="row"><% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

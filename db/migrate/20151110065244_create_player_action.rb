@@ -5,6 +5,8 @@ class CreatePlayerAction < ActiveRecord::Migration
       t.references :player, index: true, foreign_key: true
       t.references :actionable, polymorphic: true, index: true
       t.integer :quantity, default: nil
+
+      t.timestamps null: false
     end
   end
 end

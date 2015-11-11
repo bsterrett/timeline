@@ -11,20 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151110095639) do
+ActiveRecord::Schema.define(version: 20151111071912) do
+
+  create_table "bases", force: :cascade do |t|
+    t.integer  "player_id",  limit: 4
+    t.decimal  "health",               precision: 11, scale: 10, default: 1.0, null: false
+    t.integer  "location",   limit: 4,                                         null: false
+    t.integer  "position",   limit: 4,                                         null: false
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+  end
+
+  add_index "bases", ["player_id"], name: "index_bases_on_player_id", using: :btree
 
   create_table "game_event_lists", force: :cascade do |t|
-    t.integer "game_id", limit: 4
+    t.integer  "game_id",    limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   add_index "game_event_lists", ["game_id"], name: "index_game_event_lists_on_game_id", using: :btree
 
   create_table "game_events", force: :cascade do |t|
-    t.integer "game_event_list_id",   limit: 4
-    t.integer "player_id",            limit: 4
-    t.boolean "causal",                         default: true, null: false
-    t.integer "slice",                limit: 8,                null: false
-    t.integer "acausal_target_slice", limit: 8
+    t.integer  "game_event_list_id",   limit: 4
+    t.integer  "player_id",            limit: 4
+    t.boolean  "causal",                         default: true, null: false
+    t.integer  "frame",                limit: 8,                null: false
+    t.integer  "acausal_target_frame", limit: 8
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
   end
 
   add_index "game_events", ["game_event_list_id"], name: "index_game_events_on_game_event_list_id", using: :btree
@@ -36,52 +51,77 @@ ActiveRecord::Schema.define(version: 20151110095639) do
   end
 
   create_table "game_versions", force: :cascade do |t|
-    t.integer "game_id",        limit: 4
-    t.integer "number",         limit: 4, null: false
-    t.integer "starting_slice", limit: 4, null: false
+    t.integer  "game_id",        limit: 4
+    t.integer  "version",        limit: 4, null: false
+    t.integer  "starting_frame", limit: 8, null: false
+    t.integer  "current_frame",  limit: 8, null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   add_index "game_versions", ["game_id"], name: "index_game_versions_on_game_id", using: :btree
-  add_index "game_versions", ["number"], name: "index_game_versions_on_number", using: :btree
+  add_index "game_versions", ["version"], name: "index_game_versions_on_version", using: :btree
 
   create_table "games", force: :cascade do |t|
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "game_status_id", limit: 4
-    t.integer  "map_id",         limit: 4
+    t.integer  "oldest_frame",                 limit: 8, default: 0,     null: false
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.integer  "game_status_id",               limit: 4
+    t.integer  "map_id",                       limit: 4
+    t.integer  "current_game_version_id",      limit: 4
+    t.boolean  "require_advance_game_version",           default: false, null: false
   end
 
+  add_index "games", ["current_game_version_id"], name: "index_games_on_current_game_version_id", using: :btree
   add_index "games", ["game_status_id"], name: "index_games_on_game_status_id", using: :btree
   add_index "games", ["map_id"], name: "index_games_on_map_id", using: :btree
 
+  create_table "map_base_spawns", force: :cascade do |t|
+    t.integer  "map_id",     limit: 4
+    t.integer  "location",   limit: 4, null: false
+    t.integer  "position",   limit: 4, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "map_base_spawns", ["map_id"], name: "index_map_base_spawns_on_map_id", using: :btree
+
   create_table "map_tower_spawns", force: :cascade do |t|
-    t.integer "map_id",   limit: 4
-    t.integer "location", limit: 4, null: false
-    t.integer "position", limit: 4, null: false
+    t.integer  "map_id",     limit: 4
+    t.integer  "location",   limit: 4, null: false
+    t.integer  "position",   limit: 4, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   add_index "map_tower_spawns", ["map_id"], name: "index_map_tower_spawns_on_map_id", using: :btree
 
   create_table "map_troop_spawns", force: :cascade do |t|
-    t.integer "map_id",   limit: 4
-    t.integer "location", limit: 4, null: false
-    t.integer "position", limit: 4, null: false
+    t.integer  "map_id",     limit: 4
+    t.integer  "location",   limit: 4, null: false
+    t.integer  "position",   limit: 4, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   add_index "map_troop_spawns", ["map_id"], name: "index_map_troop_spawns_on_map_id", using: :btree
 
   create_table "maps", force: :cascade do |t|
-    t.string  "name",              limit: 255,             null: false
-    t.string  "display_name",      limit: 255,             null: false
-    t.integer "max_players",       limit: 4,   default: 2, null: false
-    t.integer "max_player_towers", limit: 4,               null: false
-    t.integer "segment_length",    limit: 4,               null: false
+    t.string   "name",              limit: 255,             null: false
+    t.string   "display_name",      limit: 255,             null: false
+    t.integer  "max_players",       limit: 4,   default: 2, null: false
+    t.integer  "max_player_towers", limit: 4,               null: false
+    t.integer  "segment_length",    limit: 4,               null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
   end
 
   create_table "matches", force: :cascade do |t|
-    t.boolean "started",             default: false, null: false
-    t.boolean "concluded",           default: false, null: false
-    t.integer "game_id",   limit: 4
+    t.boolean  "started",              default: false, null: false
+    t.boolean  "concluded",            default: false, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.integer  "game_id",    limit: 4
   end
 
   add_index "matches", ["game_id"], name: "index_matches_on_game_id", using: :btree
@@ -100,11 +140,13 @@ ActiveRecord::Schema.define(version: 20151110095639) do
   end
 
   create_table "player_actions", force: :cascade do |t|
-    t.integer "player_action_type_id", limit: 4
-    t.integer "player_id",             limit: 4
-    t.integer "actionable_id",         limit: 4
-    t.string  "actionable_type",       limit: 255
-    t.integer "quantity",              limit: 4
+    t.integer  "player_action_type_id", limit: 4
+    t.integer  "player_id",             limit: 4
+    t.integer  "actionable_id",         limit: 4
+    t.string   "actionable_type",       limit: 255
+    t.integer  "quantity",              limit: 4
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
   add_index "player_actions", ["actionable_type", "actionable_id"], name: "index_player_actions_on_actionable_type_and_actionable_id", using: :btree
@@ -132,11 +174,12 @@ ActiveRecord::Schema.define(version: 20151110095639) do
   create_table "towers", force: :cascade do |t|
     t.integer  "player_id",     limit: 4
     t.integer  "tower_type_id", limit: 4
-    t.integer  "level",         limit: 4, default: 0, null: false
-    t.integer  "location",      limit: 4,             null: false
-    t.integer  "position",      limit: 4,             null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.integer  "level",         limit: 4,                           default: 0,   null: false
+    t.integer  "location",      limit: 4,                                         null: false
+    t.integer  "position",      limit: 4,                                         null: false
+    t.decimal  "health",                  precision: 11, scale: 10, default: 1.0, null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
   end
 
   add_index "towers", ["player_id"], name: "index_towers_on_player_id", using: :btree
@@ -151,26 +194,33 @@ ActiveRecord::Schema.define(version: 20151110095639) do
   end
 
   create_table "troops", force: :cascade do |t|
-    t.integer "player_id",     limit: 4
-    t.integer "troop_type_id", limit: 4
-    t.integer "location",      limit: 4,                                         null: false
-    t.decimal "health",                  precision: 11, scale: 10, default: 1.0, null: false
-    t.integer "level",         limit: 4,                           default: 0,   null: false
+    t.integer  "player_id",     limit: 4
+    t.integer  "troop_type_id", limit: 4
+    t.integer  "location",      limit: 4,                                         null: false
+    t.decimal  "health",                  precision: 11, scale: 10, default: 1.0, null: false
+    t.integer  "level",         limit: 4,                           default: 0,   null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
   end
 
   add_index "troops", ["player_id"], name: "index_troops_on_player_id", using: :btree
   add_index "troops", ["troop_type_id"], name: "index_troops_on_troop_type_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string "username", limit: 255, null: false
+    t.string   "username",   limit: 255, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
+  add_foreign_key "bases", "players"
   add_foreign_key "game_event_lists", "games"
   add_foreign_key "game_events", "game_event_lists"
   add_foreign_key "game_events", "players"
   add_foreign_key "game_versions", "games"
   add_foreign_key "games", "game_statuses"
+  add_foreign_key "games", "game_versions", column: "current_game_version_id"
   add_foreign_key "games", "maps"
+  add_foreign_key "map_base_spawns", "maps"
   add_foreign_key "map_tower_spawns", "maps"
   add_foreign_key "map_troop_spawns", "maps"
   add_foreign_key "matches", "games"
