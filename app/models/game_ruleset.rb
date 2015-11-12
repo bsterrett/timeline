@@ -8,6 +8,7 @@ class GameRuleset
                 :resource_speed_modifier,
                 :troop_speed_modifier,
                 :base_health_modifier,
+                :fractional_health_constant,
                 :handshake_bounded_acausal_actions,
                 :rebase_to_oldest_frame_on_acausal_action
 end

@@ -13,11 +13,10 @@ class Game < ActiveRecord::Base
   attr_accessor :game_ruleset
 
   def init_callback
-    game_version = self.game_versions.build({ version: 0, starting_frame: 0, current_frame: 0 })
-    game_version.save
+    game_version = self.game_versions.create({ version: 0, starting_frame: 0, current_frame: 0 })
     update_attribute(:current_game_version, game_version)
 
-    self.build_game_event_list.save
+    self.create_game_event_list
   end
 
   def require_advance_game_version!
@@ -43,10 +42,12 @@ class Game < ActiveRecord::Base
   def advance_frame iterations = 1
     iterations.times do
       players.each do |player|
-        player.game_pieces.each do |game_piece|
+        player.living_game_pieces.each do |game_piece|
           # TODO: implement base attack, currently doing nothing
           game_piece.attack_best_target opposing_player_targets(player)
         end
+
+        player.troops.living.collect(&:advance_location)
       end
 
       current_game_version.increment_current_frame!
@@ -59,18 +60,26 @@ class Game < ActiveRecord::Base
       target_frame = game_event_list.last_acausal_event.try(:acausal_target_frame) || 0
       target_version = current_game_version.version + 1
 
-      new_version = self.game_versions.build(
+      new_version = self.game_versions.create(
         { version: target_version, starting_frame: target_frame, current_frame: target_frame }
       )
     else
-      new_version = self.game_versions.build({ version: 0, starting_frame: 0, current_frame: 0 })
+      new_version = self.game_versions.create({ version: 0, starting_frame: 0, current_frame: 0 })
     end
-    new_version.save
-
     update_attributes({
       current_game_version: new_version,
       require_advance_game_version: false
     })
+  end
+
+  def remaining_players
+    players.select do |player|
+      player.bases.living.length > 0
+    end
+  end
+
+  def win_condition?
+    remaining_players.length == 1
   end
 
   private
@@ -79,6 +88,6 @@ class Game < ActiveRecord::Base
   end
 
   def opposing_player_targets player
-    opposing_players(player).collect(&:game_pieces).flatten
+    opposing_players(player).collect(&:game_pieces).flatten.select { |piece| piece.health > 0.0 }
   end
 end

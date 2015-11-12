@@ -9,8 +9,8 @@
         <div class="col-xs-6 col-lg-2">
           <h3>Match</h3>
           <p>Id: <%= @match.id %></p>
-          <p>Users: <%= @match.users.collect(&:id) %></p>
-          <p>Game: <%= @match.game.id %></p>
+          <p>User ids: <%= @match.users.collect(&:id) %></p>
+          <p>Game id: <%= @match.game.id %></p>
         </div>
         <% end %>
         <% if @game %>
@@ -18,12 +18,14 @@
           <h3>Game</h3>
           <p>Id: <%= @game.id %></p>
           <p>Status: <%= @game.status %></p>
+          <% if @game.win_condition? %>
+          <p>Winning Player id: <%= @game.remaining_players[0].try(:id) %></p>
+          <% end %>
           <p>Current frame: <%= @game.current_frame %></p>
           <p>Current version: <%= @game.current_version %></p>
           <p>Need rebase: <%= @game.require_advance_game_version? %></p>
-          <p>Players: <%= @game.players.collect(&:id) %></p>
-          <p>Map: <%= @game.map.id %></p>
-          <p>Total events: <%= @game.game_event_list.game_events.size %></p>
+          <p>Player ids: <%= @game.players.collect(&:id) %></p>
+          <p>Map id: <%= @game.map.id %></p>
         </div>
         <% end %>
         <% if @game and @game.game_event_list %>
@@ -42,9 +44,9 @@
               <p>Username: <%= player.username %></p>
               <p>Resources: <%= player.resources %></p>
               <p>Troops: <%= player.troops.count %></p>
-              <p>Living: <%= player.troops.select{ health > 0.0 }.length %></p>
+              <p>Living: <%= player.troops.select{ |t| t.health > 0.0 }.length %></p>
               <p>Towers: <%= player.towers.count %></p>
-              <p>Living: <%= player.towers.select{ health > 0.0 }.length %></p>
+              <p>Living: <%= player.towers.select{ |t| t.health > 0.0 }.length %></p>
               <p>Base health: <%= player.bases.collect(&:health).collect(&:to_f) %></p>
             </div>
           <% if i%6 == 5 %></div><div class="row"><% end %>
@@ -66,6 +68,17 @@
             <% end %>
             <p>Frame: <%= game_event.frame %></p>
             <p>Acasual target frame: <%= game_event.acausal_target_frame %></p>
+            <% unless game_event.player_action.nil? %>
+            <h5>Player Action</h5>
+            <p>Id: <%= game_event.player_action.id %></p>
+            <p>Qauntity: <%= game_event.player_action.quantity %></p>
+            <p>Player action type: <%= game_event.player_action.player_action_type.try(:name) %></p>
+              <% unless game_event.player_action.actionable.nil? %>
+                <h5>Actionable</h5>
+                <p>Id: <%= game_event.player_action.actionable.id %></p>
+                <p>Class: <%= game_event.player_action.actionable.class %></p>
+              <% end %>
+            <% end %>
           </div>
           <% if i%6 == 5 %></div><div class="row"><% end %>
           <% end %>

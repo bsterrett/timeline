@@ -7,10 +7,11 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 player_action_types = PlayerActionType.create([
-  { name: 'build', display_name: 'Build' },
-  { name: 'attack', display_name: 'Attack' },
+  { name: 'build_troop', display_name: 'Build A Soldier' },
+  { name: 'build_tower', display_name: 'Build A Tower' },
   { name: 'research', display_name: 'Research' },
   { name: 'handshake', display_name: 'Handshake' },
+  { name: 'warp', display_name: 'Warp' },
   { name: 'forfeit', display_name: 'Forfeit' }
 ])
 
@@ -31,20 +32,6 @@ tower_types = TowerType.create([
 
 maps = Map.create([
   { name: 'timeline', display_name: 'The Map', max_players: 2, max_player_towers: 3, segment_length: 10 }
-])
-
-map_tower_spawns = MapTowerSpawn.create([
-  { map_id: 1, location: 1, position: 0 },
-  { map_id: 1, location: 3, position: 1 },
-  { map_id: 1, location: 5, position: 2 }
-])
-
-map_troop_spawns = MapTroopSpawn.create([
-  { map_id: 1, location: 9, position: 0 }
-])
-
-map_base_spawns = MapBaseSpawn.create([
-  { map_id: 1, location: 0, position: 0 }
 ])
 
 users = User.create([

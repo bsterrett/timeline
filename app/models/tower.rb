@@ -2,9 +2,10 @@ class Tower < ActiveRecord::Base
   belongs_to :player
   belongs_to :tower_type
 
+  scope :living, -> { where('health > 0.0') }
+
   def attack_best_target targets
-    # TODO: find a way to get the best target
-    attack_first_target
+    attack_first_target in_range(targets)
   end
 
   def attack_first_target targets
@@ -15,20 +16,29 @@ class Tower < ActiveRecord::Base
   end
 
   def attack target
-    target.send(:receive_damage, current_attack)
+    target.send(:receive_damage, current_attack/1000.0)
   end
 
   def receive_damage damage
     effective_damage = damage * (10.0 - current_defense) / 10.0
-
-    decrement!(:health, effective_damage)
+    self.health -= effective_damage
+    self.health = 0.0 if self.health < 0.0
+    self.save
   end
 
   def current_defense
-    base_defense
+    level
   end
 
   def current_attack
-    base_attack
+    level + 1
+  end
+
+  def current_range
+    (level * 0.5).ceil
+  end
+
+  def in_range(targets)
+    targets.select { |target| (target.location - self.location).abs <= current_range }
   end
 end

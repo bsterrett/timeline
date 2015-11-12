@@ -11,11 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151111071912) do
+ActiveRecord::Schema.define(version: 20151111205703) do
 
   create_table "bases", force: :cascade do |t|
     t.integer  "player_id",  limit: 4
     t.decimal  "health",               precision: 11, scale: 10, default: 1.0, null: false
+    t.integer  "level",      limit: 4,                           default: 0,   null: false
     t.integer  "location",   limit: 4,                                         null: false
     t.integer  "position",   limit: 4,                                         null: false
     t.datetime "created_at",                                                   null: false
@@ -40,9 +41,12 @@ ActiveRecord::Schema.define(version: 20151111071912) do
     t.integer  "acausal_target_frame", limit: 8
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.integer  "player_action_id",     limit: 4
   end
 
+  add_index "game_events", ["frame"], name: "index_game_events_on_frame", using: :btree
   add_index "game_events", ["game_event_list_id"], name: "index_game_events_on_game_event_list_id", using: :btree
+  add_index "game_events", ["player_action_id"], name: "index_game_events_on_player_action_id", using: :btree
   add_index "game_events", ["player_id"], name: "index_game_events_on_player_id", using: :btree
 
   create_table "game_statuses", force: :cascade do |t|
@@ -77,34 +81,43 @@ ActiveRecord::Schema.define(version: 20151111071912) do
   add_index "games", ["map_id"], name: "index_games_on_map_id", using: :btree
 
   create_table "map_base_spawns", force: :cascade do |t|
-    t.integer  "map_id",     limit: 4
-    t.integer  "location",   limit: 4, null: false
-    t.integer  "position",   limit: 4, null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "map_id",       limit: 4
+    t.integer  "location",     limit: 4,                 null: false
+    t.integer  "position",     limit: 4,                 null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.boolean  "spawn_locked",           default: false
+    t.integer  "player_id",    limit: 4,                 null: false
   end
 
   add_index "map_base_spawns", ["map_id"], name: "index_map_base_spawns_on_map_id", using: :btree
+  add_index "map_base_spawns", ["player_id"], name: "index_map_base_spawns_on_player_id", using: :btree
 
   create_table "map_tower_spawns", force: :cascade do |t|
-    t.integer  "map_id",     limit: 4
-    t.integer  "location",   limit: 4, null: false
-    t.integer  "position",   limit: 4, null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "map_id",       limit: 4
+    t.integer  "location",     limit: 4,                 null: false
+    t.integer  "position",     limit: 4,                 null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.boolean  "spawn_locked",           default: false
+    t.integer  "player_id",    limit: 4,                 null: false
   end
 
   add_index "map_tower_spawns", ["map_id"], name: "index_map_tower_spawns_on_map_id", using: :btree
+  add_index "map_tower_spawns", ["player_id"], name: "index_map_tower_spawns_on_player_id", using: :btree
 
   create_table "map_troop_spawns", force: :cascade do |t|
-    t.integer  "map_id",     limit: 4
-    t.integer  "location",   limit: 4, null: false
-    t.integer  "position",   limit: 4, null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "map_id",       limit: 4
+    t.integer  "location",     limit: 4,                 null: false
+    t.integer  "position",     limit: 4,                 null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.boolean  "spawn_locked",           default: false
+    t.integer  "player_id",    limit: 4,                 null: false
   end
 
   add_index "map_troop_spawns", ["map_id"], name: "index_map_troop_spawns_on_map_id", using: :btree
+  add_index "map_troop_spawns", ["player_id"], name: "index_map_troop_spawns_on_player_id", using: :btree
 
   create_table "maps", force: :cascade do |t|
     t.string   "name",              limit: 255,             null: false
@@ -215,14 +228,18 @@ ActiveRecord::Schema.define(version: 20151111071912) do
   add_foreign_key "bases", "players"
   add_foreign_key "game_event_lists", "games"
   add_foreign_key "game_events", "game_event_lists"
+  add_foreign_key "game_events", "player_actions"
   add_foreign_key "game_events", "players"
   add_foreign_key "game_versions", "games"
   add_foreign_key "games", "game_statuses"
   add_foreign_key "games", "game_versions", column: "current_game_version_id"
   add_foreign_key "games", "maps"
   add_foreign_key "map_base_spawns", "maps"
+  add_foreign_key "map_base_spawns", "players"
   add_foreign_key "map_tower_spawns", "maps"
+  add_foreign_key "map_tower_spawns", "players"
   add_foreign_key "map_troop_spawns", "maps"
+  add_foreign_key "map_troop_spawns", "players"
   add_foreign_key "matches", "games"
   add_foreign_key "matches_users", "matches"
   add_foreign_key "matches_users", "users"
