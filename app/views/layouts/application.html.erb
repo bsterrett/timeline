@@ -8,9 +8,7 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <script>
-  function sendAjaxTestHelperRequest() {
-    var request_url = 'http://localhost:3001' + $('#ajax-test-helper-url').val();
-    var request_data = JSON.parse($('#ajax-test-helper-data').val());
+  function sendAjaxTestHelperRequest(request_url, request_data) {
     $.ajax({
       url: request_url,
       data: request_data,

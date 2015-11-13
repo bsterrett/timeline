@@ -101,6 +101,7 @@ class PlayController < ApplicationController
 
     if @game.win_condition?
       @game.game_status = GameStatus.find_by_name('finished')
+      @game.save
     end
 
     render :timelinegame, layout: false
