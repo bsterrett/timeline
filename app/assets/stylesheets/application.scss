@@ -19,6 +19,7 @@
 
 .navbar-fixer {
   min-height: 50px;
+  margin-bottom: 20px;
 }
 
 #ajax-test-helper-url, #ajax-test-helper-data {
@@ -39,4 +40,21 @@
 
 #ajax-helper-text-navbar {
   padding: 0;
+}
+
+.debug-panel {
+  background-color: #DDD;
+  padding-right: 0;
+}
+
+.debug-panel .collapse {
+  padding-right: 15px;
+}
+
+.debug-toggle-btn {
+  border-radius: 4px;
+}
+
+.debug-panel h3 {
+  margin-top: 10px;
 }

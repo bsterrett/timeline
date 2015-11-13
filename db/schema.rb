@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151111205703) do
+ActiveRecord::Schema.define(version: 20151113043731) do
 
   create_table "bases", force: :cascade do |t|
     t.integer  "player_id",  limit: 4
@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(version: 20151111205703) do
     t.integer "base_attack",  limit: 4,   null: false
     t.integer "base_defense", limit: 4,   null: false
     t.integer "base_speed",   limit: 4,   null: false
+    t.integer "base_cost",    limit: 4,   null: false
   end
 
   create_table "towers", force: :cascade do |t|
@@ -204,6 +205,7 @@ ActiveRecord::Schema.define(version: 20151111205703) do
     t.integer "base_attack",  limit: 4,   null: false
     t.integer "base_defense", limit: 4,   null: false
     t.integer "base_speed",   limit: 4,   null: false
+    t.integer "base_cost",    limit: 4,   null: false
   end
 
   create_table "troops", force: :cascade do |t|

@@ -139,7 +139,16 @@ class PlayController < ApplicationController
 
     game_event.update_attribute(:player_action, player_action)
 
-    player_action.enact
+    begin
+      player_action.enact
+    rescue Exceptions::TimelineError => e
+      puts "\n" + "-" * 100
+      puts "#{e.class}: #{e.message}"
+      e.backtrace[0..5].each do |b|
+        puts "  " + b.to_s
+      end
+      puts "-" * 100 + "\n"
+    end
 
     unless @causal
       @game.require_advance_game_version!

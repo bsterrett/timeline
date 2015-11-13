@@ -28,4 +28,12 @@ class Player < ActiveRecord::Base
   def get_next_available_troop_spawn
     map_troop_spawns.select{ |s| !s.locked? }.sort{ |s1,s2| s1.position <=> s2.position }.first
   end
+
+  def receive_income resources = current_income
+    increment!(:resources, resources)
+  end
+
+  def current_income
+    50
+  end
 end

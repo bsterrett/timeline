@@ -48,6 +48,8 @@ class Game < ActiveRecord::Base
         end
 
         player.troops.living.collect(&:advance_location)
+
+        player.receive_income
       end
 
       current_game_version.increment_current_frame!

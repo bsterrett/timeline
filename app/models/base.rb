@@ -3,6 +3,20 @@ class Base < ActiveRecord::Base
 
   scope :living, -> { where('health > 0.0') }
 
+  VALID_TARGETS = [Troop]
+
+  def attack_best_target targets
+    attack_first_target in_range(targets)
+  end
+
+  def attack_first_target targets
+    target = targets.select do |target|
+      target.living? and VALID_TARGETS.include? target.class
+    end.first
+
+    attack target unless target.nil?
+  end
+
   def attack_best_target targets
   end
 
@@ -15,5 +29,21 @@ class Base < ActiveRecord::Base
 
   def current_defense
     level
+  end
+
+  def current_attack
+    level + 1
+  end
+
+  def current_range
+    level + 1
+  end
+
+  def in_range(targets)
+    targets.select { |target| (target.location - self.location).abs <= current_range }
+  end
+
+  def living?
+    self.health > 0.0
   end
 end

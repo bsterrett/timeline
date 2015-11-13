@@ -1,89 +1,170 @@
 <div class="container">
   <div class="row row-offcanvas row-offcanvas-right">
-    <div class="col-xs-12">
-      <p class="pull-right visible-xs">
-        <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+<% if @match or @game %>
+    <div class="col-xs-12 panel debug-panel">
+      <p class="pull-right">
+        <button type="button" class="btn btn-default btn-xs debug-toggle-btn" data-toggle="collapse" data-target="#match-toggle" aria-controls="match-toggle" aria-expanded="true">Toggle</button>
+        <h3>Match Data</h3>
       </p>
-      <div class="row">
-        <% if @match %>
-        <div class="col-xs-6 col-lg-2">
-          <h3>Match</h3>
-          <p>Id: <%= @match.id %></p>
-          <p>User ids: <%= @match.users.collect(&:id) %></p>
-          <p>Game id: <%= @match.game.id %></p>
+      <div class="collapse in" id="match-toggle">
+        <div class="row">
+  <% if @match %>
+          <div class="col-xs-6 col-lg-2">
+            <h4>Match</h4>
+            <p>Id: <%= @match.id %></p>
+            <p>User ids: <%= @match.users.collect(&:id) %></p>
+            <p>Game id: <%= @match.game.id %></p>
+          </div>
+  <% end %>
+  <% if @game %>
+          <div class="col-xs-6 col-lg-2">
+            <h4>Game</h4>
+            <p>Id: <%= @game.id %></p>
+            <p>Status: <%= @game.status %></p>
+    <% if @game.win_condition? %>
+            <p>Winning Player id: <%= @game.remaining_players[0].try(:id) %></p>
+    <% end %>
+            <p>Current frame: <%= @game.current_frame %></p>
+            <p>Current version: <%= @game.current_version %></p>
+            <p>Need rebase: <%= @game.require_advance_game_version? %></p>
+            <p>Player ids: <%= @game.players.collect(&:id) %></p>
+            <p>Map id: <%= @game.map.id %></p>
+          </div>
+          <div class="col-xs-6 col-lg-2">
+            <h4>Game Event List</h4>
+            <p>Id: <%= @game.game_event_list.id %></p>
+            <p>Total events: <%= @game.game_event_list.game_events.size %></p>
+          </div>
+  <% end %>
         </div>
-        <% end %>
-        <% if @game %>
-        <div class="col-xs-6 col-lg-2">
-          <h3>Game</h3>
-          <p>Id: <%= @game.id %></p>
-          <p>Status: <%= @game.status %></p>
-          <% if @game.win_condition? %>
-          <p>Winning Player id: <%= @game.remaining_players[0].try(:id) %></p>
-          <% end %>
-          <p>Current frame: <%= @game.current_frame %></p>
-          <p>Current version: <%= @game.current_version %></p>
-          <p>Need rebase: <%= @game.require_advance_game_version? %></p>
-          <p>Player ids: <%= @game.players.collect(&:id) %></p>
-          <p>Map id: <%= @game.map.id %></p>
-        </div>
-        <% end %>
-        <% if @game and @game.game_event_list %>
-        <div class="col-xs-6 col-lg-2">
-          <h3>Game Event List</h3>
-          <p>Id: <%= @game.game_event_list.id %></p>
-          <p>Total events: <%= @game.game_event_list.game_events.size %></p>
-        </div>
-        <% end %>
-        <% if @game and @game.players and !@game.players.empty? %>
-          <% if @game.players.size > 2 %></div><hr><div class="row"><% end %>
-          <% @game.players.each_with_index do |player,i| %>
-            <div class="col-xs-6 col-lg-2">
-              <h3>Player</h3>
-              <p>Id: <%= player.id %></p>
-              <p>Username: <%= player.username %></p>
-              <p>Resources: <%= player.resources %></p>
-              <p>Troops: <%= player.troops.count %></p>
-              <p>Living: <%= player.troops.select{ |t| t.health > 0.0 }.length %></p>
-              <p>Towers: <%= player.towers.count %></p>
-              <p>Living: <%= player.towers.select{ |t| t.health > 0.0 }.length %></p>
-              <p>Base health: <%= player.bases.collect(&:health).collect(&:to_f) %></p>
-            </div>
-          <% if i%6 == 5 %></div><div class="row"><% end %>
-          <% end %>
-        <% end %>
       </div>
-      <hr>
+    </div>
+<% end %>
+<% if @game and @game.players %>
+  <% @game.players.each_with_index do |player,i| %>
+    <!-- player's data -->
+    <div class="col-xs-12 panel debug-panel">
       <div class="row">
-        <% if @game and @game.game_event_list and @game.game_event_list.game_events %>
-          <% @game.game_event_list.game_events.each_with_index do |game_event,i| %>
+        <div class="col-xs-12">
+          <p class="pull-right">
+            <button type="button" class="btn btn-default btn-xs debug-toggle-btn" data-toggle="collapse" data-target='#<%= "player-#{player.id}-data-toggle" %>' aria-controls='<%= "player-#{player.id}-data-toggle" %>' aria-expanded="true">Toggle</button>
+          </p>
+          <span><h3>Player <%= player.username %>'s data</small></h3></span>
+        </div>
+      </div>
+      <div class="collapse in" id='<%= "player-#{player.id}-data-toggle" %>'>
+        <div class="row">
+          <div class="col-xs-4 col-lg-2">
+            <h4>Player</h4>
+            <p>Id: <%= player.id %></p>
+            <p>Username: <%= player.username %></p>
+            <p>Resources: <%= player.resources %></p>
+            <p>Base health: <%= player.bases.collect(&:health).collect(&:to_f) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of player's data -->
+    <!-- player's towers -->
+    <div class="col-xs-12 panel debug-panel">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="pull-right">
+            <button type="button" class="btn btn-default btn-xs debug-toggle-btn" data-toggle="collapse" data-target='#<%= "player-#{player.id}-tower-toggle" %>' aria-controls='<%= "player-#{player.id}-tower-toggle" %>' aria-expanded="true">Toggle</button>
+          </p>
+          <span><h3>Player <%= player.username %>'s Towers <small>(<%= player.towers.living.length %> out of <%= player.towers.length %> living)</small></h3></span>
+        </div>
+      </div>
+      <div class="collapse in" id='<%= "player-#{player.id}-tower-toggle" %>'>
+        <div class="row">
+    <% player.towers.each_with_index do |tower,i| %>
+          <div class="col-xs-4 col-lg-2">
+            <h4>Troop</h4>
+            <p>Id: <%= tower.id %></p>
+            <p>Level: <%= tower.level %></p>
+            <p>Health <%= tower.health %></p>
+            <p>Type id: <%= tower.tower_type.try(:id) %></p>
+            <p>Location: <%= tower.location %></p>
+            <p>Position: <%= tower.position %></p>
+          </div>
+      <% if i%6 == 5 %></div><hr><div class="row"><% end %>
+    <% end %>
+        </div>
+      </div>
+    </div>
+    <!-- end of player's towers -->
+    <!-- player's troops -->
+    <div class="col-xs-12 panel debug-panel">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="pull-right">
+            <button type="button" class="btn btn-default btn-xs debug-toggle-btn" data-toggle="collapse" data-target='#<%= "player-#{player.id}-troop-toggle" %>' aria-controls='<%= "player-#{player.id}-troop-toggle" %>' aria-expanded="true">Toggle</button>
+          </p>
+          <span><h3>Player <%= player.username %>'s Troops <small>(<%= player.troops.living.length %> out of <%= player.troops.length %> living)</small></h3></span>
+        </div>
+      </div>
+      <div class="collapse in" id='<%= "player-#{player.id}-troop-toggle" %>'>
+        <div class="row">
+    <% player.troops.each_with_index do |troop,i| %>
+          <div class="col-xs-4 col-lg-2">
+            <h4>Troop</h4>
+            <p>Id: <%= troop.id %></p>
+            <p>Level: <%= troop.level %></p>
+            <p>Health <%= troop.health %></p>
+            <p>Type id: <%= troop.troop_type.try(:id) %></p>
+            <p>Location: <%= troop.location %></p>
+          </div>
+      <% if i%6 == 5 %></div><div class="row"><% end %>
+    <% end %>
+        </div>
+      </div>
+    </div>
+    <!-- end of player's troops -->
+  <% end %>
+<% end %>
+<% if @game and @game.game_event_list and @game.game_event_list.game_events %>
+    <div class="col-xs-12 panel debug-panel">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="pull-right">
+            <button type="button" class="btn btn-default btn-xs debug-toggle-btn" data-toggle="collapse" data-target="#game-event-list-toggle" aria-controls="game-event-list-toggle" aria-expanded="true">Toggle</button>
+          </p>
+          <h3>Game Events</h3>
+        </div>
+      </div>
+      <div class="collapse in" id="game-event-list-toggle">
+        <div class="row">
+  <% if @game and @game.game_event_list and @game.game_event_list.game_events %>
+    <% @game.game_event_list.game_events.each_with_index do |game_event,i| %>
           <div class="col-xs-4 col-lg-2">
             <h4>Game Event</h4>
             <p>Id: <%= game_event.id %></p>
             <p>Player: <%= game_event.player.id %></p>
-            <% if game_event.causal? %>
+      <% if game_event.causal? %>
             <p>Causal: true</p>
-            <% else %>
+      <% else %>
             <p class="acausal-game-event">Causal: false</p>
-            <% end %>
+      <% end %>
             <p>Frame: <%= game_event.frame %></p>
             <p>Acasual target frame: <%= game_event.acausal_target_frame %></p>
-            <% unless game_event.player_action.nil? %>
+      <% unless game_event.player_action.nil? %>
             <h5>Player Action</h5>
             <p>Id: <%= game_event.player_action.id %></p>
             <p>Qauntity: <%= game_event.player_action.quantity %></p>
             <p>Player action type: <%= game_event.player_action.player_action_type.try(:name) %></p>
-              <% unless game_event.player_action.actionable.nil? %>
-                <h5>Actionable</h5>
-                <p>Id: <%= game_event.player_action.actionable.id %></p>
-                <p>Class: <%= game_event.player_action.actionable.class %></p>
-              <% end %>
-            <% end %>
-          </div>
-          <% if i%6 == 5 %></div><div class="row"><% end %>
-          <% end %>
+        <% unless game_event.player_action.actionable.nil? %>
+            <h5>Actionable</h5>
+            <p>Id: <%= game_event.player_action.actionable.id %></p>
+            <p>Class: <%= game_event.player_action.actionable.class %></p>
         <% end %>
+      <% end %>
+          </div>
+      <% if i%6 == 5 %></div><hr><div class="row"><% end %>
+    <% end %>
+  <% end %>
+        </div>
       </div>
     </div>
+<% end %>
   </div>
 </div>

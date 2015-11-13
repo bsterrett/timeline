@@ -6,6 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+puts "Starting db:seed, this could be a while..."
+
 player_action_types = PlayerActionType.create([
   { name: 'build_troop', display_name: 'Build A Soldier' },
   { name: 'build_tower', display_name: 'Build A Tower' },
@@ -23,11 +25,11 @@ game_statuses = GameStatus.create([
 ])
 
 troop_types = TroopType.create([
-  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 0, base_speed: 1 }
+  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 0, base_speed: 1, base_cost: 100 }
 ])
 
 tower_types = TowerType.create([
-  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 0, base_speed: 1 }
+  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 0, base_speed: 1, base_cost: 100 }
 ])
 
 maps = Map.create([
@@ -39,3 +41,5 @@ users = User.create([
   { username: 'maverick' },
   { username: 'bane' }
 ])
+
+puts "Or not."

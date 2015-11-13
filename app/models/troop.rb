@@ -4,19 +4,22 @@ class Troop < ActiveRecord::Base
 
   scope :living, -> { where('health > 0.0') }
 
+  VALID_TARGETS = [Base]
+
   def attack_best_target targets
     attack_first_target in_range(targets)
   end
 
   def attack_first_target targets
-    target = targets.first
-    if target.is_a? Base or target.is_a? Tower
-      attack target
-    end
+    target = targets.select do |target|
+      target.living? and VALID_TARGETS.include? target.class
+    end.first
+
+    attack target unless target.nil?
   end
 
   def attack target
-    target.send(:receive_damage, current_attack/1000.0)
+    target.send(:receive_damage, current_attack/8.0)
   end
 
   def receive_damage damage
@@ -39,10 +42,14 @@ class Troop < ActiveRecord::Base
   end
 
   def current_range
-    (level * 0.5).ceil
+    level + 1
   end
 
   def in_range(targets)
     targets.select { |target| (target.location - self.location).abs <= current_range }
+  end
+
+  def living?
+    self.health > 0.0
   end
 end
