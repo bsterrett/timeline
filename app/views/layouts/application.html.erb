@@ -17,15 +17,50 @@
         document.getElementById('ajax-helper-text-container').innerHTML = data;
       },
       error: function(data) {
+        turnContinuousRefreshOff();
         console.log(data);
       }
     });
+  }
+
+  function getRequestUrl() {
+    return 'http://localhost:3001' + $('#ajax-test-helper-url').val();
+  }
+
+  function getRequestData() {
+    return JSON.parse($('#ajax-test-helper-data').val());
   }
 
   function setAjaxHelperURL(url, options) {
     $('#ajax-test-helper-url').val(url);
     $('#ajax-test-helper-data').val(JSON.stringify(options));
     return false;
+  }
+
+  function continuouslyAdvanceGame() {
+    var continuousRefresh = setInterval(function() {
+      if($('#refresh-on').hasClass('active')) {
+        sendAjaxTestHelperRequest('/match/1/advance_game',{});
+      } else {
+        clearInterval(continuousRefresh);
+      }
+    }, 1000);
+
+  }
+
+  function turnContinuousRefreshOn() {
+    $('#refresh-on').addClass('active btn-success');
+    $('#refresh-on').removeClass('btn-default');
+    $('#refresh-off').addClass('btn-default');
+    $('#refresh-off').removeClass('active btn-danger');
+    continuouslyAdvanceGame();
+  }
+
+  function turnContinuousRefreshOff() {
+    $('#refresh-off').addClass('active btn-danger');
+    $('#refresh-off').removeClass('btn-default');
+    $('#refresh-on').addClass('btn-default');
+    $('#refresh-on').removeClass('active btn-success');
   }
   </script>
 </head>
@@ -39,8 +74,8 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-success navbar-btn">On</button>
-            <button type="button" class="btn btn-danger navbar-btn">Off</button>
+            <button type="button" class="btn btn-default navbar-btn" id="refresh-on" onclick="turnContinuousRefreshOn();">On</button>
+            <button type="button" class="btn btn-default navbar-btn" id="refresh-off" onclick="turnContinuousRefreshOff();">Off</button>
           </div>
         </li>
         <li>
@@ -49,7 +84,7 @@
               <input type="text" id="ajax-test-helper-url" class="form-control" placeholder='/'>
               <input type="text" id="ajax-test-helper-data" class="form-control" placeholder='{}'>
             </div>
-            <button id="search_addresses" class="btn btn-default" onclick="sendAjaxTestHelperRequest();">Request</button>
+            <button id="search_addresses" class="btn btn-default" onclick="sendAjaxTestHelperRequest(getRequestUrl(), getRequestData());">Request</button>
           </div>
         </li>
         <li class="dropdown">
