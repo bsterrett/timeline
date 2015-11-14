@@ -5,7 +5,6 @@ class CreateMap < ActiveRecord::Migration
       t.string :display_name, null: false
       t.integer :max_players, null: false, default: 2
       t.integer :max_player_towers, null: false
-      t.integer :segment_length, null: false
 
       t.timestamps null: false
     end

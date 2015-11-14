@@ -18,6 +18,7 @@
       },
       error: function(data) {
         turnContinuousRefreshOff();
+        document.getElementById('ajax-helper-text-container').innerHTML = data;
         console.log(data);
       }
     });
@@ -90,12 +91,12 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Samples <span class="caret"></span></a>
           <ul class="ajax-helper-links dropdown-menu">
-            <li><a href="#" onclick="setAjaxHelperURL('/play',{});return false;">New Game</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match/1/advance_game',{});">Advance Game</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match/1/player/1/action/build_troop',{'actionable_type':'troop_type','actionable_id':1,'quantity':1});">Build Troop</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match/1/player/1/action/build_tower',{'actionable_type':'tower_type','actionable_id':1,'quantity':1});">Build Tower</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match/1/player/1/action/handshake',{});">Handshake</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match/1/player/1/action/warp',{'causal':false,'acausal_target_frame':3});">Warp</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/play',{'user_ids':[1,2], 'map_id':1});return false;">New Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/advance_game',{});">Advance Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_troop',{'actionable_type':'troop_type','actionable_id':1,'quantity':1});">Build Troop</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_tower',{'actionable_type':'tower_type','actionable_id':1,'quantity':1});">Build Tower</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/handshake',{});">Handshake</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/warp',{'causal':false,'acausal_target_frame':3});">Warp</a></li>
           </ul>
         </li>
       </ul>
@@ -104,6 +105,12 @@
 </nav>
 <div class="navbar-fixer">&nbsp;</div>
 <div id="ajax-helper-text-container">
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+<% if flash[:errors] %>
+  <div class="errors"><%= flash[:errors] %></div>
+<% end %>
 
 <%= yield %>
 

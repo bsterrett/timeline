@@ -124,7 +124,6 @@ ActiveRecord::Schema.define(version: 20151113043731) do
     t.string   "display_name",      limit: 255,             null: false
     t.integer  "max_players",       limit: 4,   default: 2, null: false
     t.integer  "max_player_towers", limit: 4,               null: false
-    t.integer  "segment_length",    limit: 4,               null: false
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
   end

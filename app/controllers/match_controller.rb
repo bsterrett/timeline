@@ -8,15 +8,7 @@ class PlayController < ApplicationController
 
   def new_match
     @match = Match.new
-
-    user_ids = params.delete(:user_ids)
-
-    begin
-      @match.users = user_ids.map { |user_id| User.find(user_id)}
-    rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
-    end
+    @match.users = [User.first, User.last]
 
     @game = Game.new
 
@@ -24,18 +16,10 @@ class PlayController < ApplicationController
       @game.players << Player.create({ username: user.username })
     end
 
-
     # TODO: Create map fabricator
     #   should build a map and fixtures from a template
     #   then it should populate the map with game pieces for all players
-
-    begin
-      map = Map.find(params[:map_id])
-    rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
-    end
-
+    map = Map.first
     @game.players.each do |player|
       player.map_base_spawns.create({
         map: map,
@@ -100,17 +84,10 @@ class PlayController < ApplicationController
     session[:match_id] = @match.id
 
     render :timelinegame, layout: false
-  rescue StandardError => e
-    render :timelinegame, layout: false, status: 500 and return
   end
 
   def advance_game
-    begin
-      @match = Match.find(session[:match_id] || params[:match_id])
-    rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
-    end
+    @match = Match.find(session[:match_id] || params[:match_id])
     @game = @match.game
 
     render :timelinegame, layout: false and return if @game.win_condition?
@@ -136,7 +113,7 @@ class PlayController < ApplicationController
     @game = @match.game
     @player = Player.find(session[:player_id] || params[:player_id])
 
-    render :text => "this isnt a valid player" and return unless @game.players.include? @player
+    render :text => "this isn't a valid player" and return unless @game.players.include? @player
 
     @player_action_type = PlayerActionType.find_by_name(params[:player_action_type])
     @actionable = nil # TODO: implement actionable type, like troop, tower, etc.

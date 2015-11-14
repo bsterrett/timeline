@@ -33,7 +33,7 @@ tower_types = TowerType.create([
 ])
 
 maps = Map.create([
-  { name: 'timeline', display_name: 'The Map', max_players: 2, max_player_towers: 3, segment_length: 10 }
+  { name: 'timeline', display_name: 'The Map', max_players: 2, max_player_towers: 3 }
 ])
 
 users = User.create([
