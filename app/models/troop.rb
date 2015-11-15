@@ -12,7 +12,7 @@ class Troop < ActiveRecord::Base
 
   def attack_first_target targets
     target = targets.select do |target|
-      target.living? and VALID_TARGETS.include? target.class
+      target.living? and can_attack? target
     end.first
 
     attack target unless target.nil?
@@ -30,7 +30,7 @@ class Troop < ActiveRecord::Base
   end
 
   def advance_location
-    decrement!(:location) unless self.location == 0
+    decrement!(:location) unless dead? or self.location == 0
   end
 
   def current_defense
@@ -45,11 +45,19 @@ class Troop < ActiveRecord::Base
     level + 1
   end
 
-  def in_range(targets)
+  def in_range targets
     targets.select { |target| (target.location - self.location).abs <= current_range }
   end
 
   def living?
     self.health > 0.0
+  end
+
+  def dead?
+    !living?
+  end
+
+  def can_attack? target
+    VALID_TARGETS.include? target.class
   end
 end

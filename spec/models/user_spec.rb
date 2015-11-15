@@ -7,7 +7,7 @@ describe User do
   end
 
   it 'can be saved with username' do
-    user = User.new({ username: 'Ben' })
+    user = create(:user, username: 'Ben')
     expect{ user.save }.to_not raise_error
     expect(user.username).to eq('Ben')
   end

@@ -1,25 +1,55 @@
-class PlayController < ApplicationController
+class MatchController < ApplicationController
   skip_before_action :verify_authenticity_token
-  layout 'application'
+  layout false
 
-  def index
-    render :timelinegame
+  def show
+    @match = Match.find(session[:match_id] || params[:id])
+    @game = @match.game
+    render 'play/timelinegame'
+  rescue ActiveRecord::RecordNotFound => e
+    flash.now[:errors] = e.message.to_s
+    render 'play/timelinegame', status: 500
   end
 
-  def new_match
+  def create
     @match = Match.new
-    @match.users = [User.first, User.last]
+
+    user_ids = params.delete(:user_ids)
+
+    begin
+      users = user_ids.map { |user_id| User.find(user_id)}
+    rescue ActiveRecord::RecordNotFound => e
+      flash.now[:errors] = e.message.to_s
+      render 'play/timelinegame', status: 500 and return
+    end
+
+    begin
+      map = Map.find(params[:map_id])
+    rescue ActiveRecord::RecordNotFound => e
+      flash.now[:errors] = e.message.to_s
+      render 'play/timelinegame', status: 500 and return
+    end
+
+    unless users.present? and users.any? and map.present?
+      flash.now[:errors] = "error getting users and/or map"
+      render 'play/timelinegame', status: 500 and return
+    end
+
+    @match.users = users
 
     @game = Game.new
 
     @match.users.each do |user|
-      @game.players << Player.create({ username: user.username })
+      @game.players << user.create_player
     end
+
+    @game.map = map
+
 
     # TODO: Create map fabricator
     #   should build a map and fixtures from a template
     #   then it should populate the map with game pieces for all players
-    map = Map.first
+
     @game.players.each do |player|
       player.map_base_spawns.create({
         map: map,
@@ -57,8 +87,6 @@ class PlayController < ApplicationController
       end
     end
 
-    @game.map = map
-
     ruleset = GameRuleset.new
     ruleset.max_players = @game.map.max_players || 2
     ruleset.max_resources = 100000000000
@@ -83,82 +111,8 @@ class PlayController < ApplicationController
 
     session[:match_id] = @match.id
 
-    render :timelinegame, layout: false
-  end
-
-  def advance_game
-    @match = Match.find(session[:match_id] || params[:match_id])
-    @game = @match.game
-
-    render :timelinegame, layout: false and return if @game.win_condition?
-
-    if @game.status == 'not_started'
-      @game.game_status = GameStatus.find_by_name('in_progress')
-      @game.save
-    end
-
-    @game.advance_game_version if @game.require_advance_game_version?
-    @game.advance_frame
-
-    if @game.win_condition?
-      @game.game_status = GameStatus.find_by_name('finished')
-      @game.save
-    end
-
-    render :timelinegame, layout: false
-  end
-
-  def create_player_action
-    @match = Match.find(session[:match_id] || params[:match_id])
-    @game = @match.game
-    @player = Player.find(session[:player_id] || params[:player_id])
-
-    render :text => "this isn't a valid player" and return unless @game.players.include? @player
-
-    @player_action_type = PlayerActionType.find_by_name(params[:player_action_type])
-    @actionable = nil # TODO: implement actionable type, like troop, tower, etc.
-    @quantity = params[:quantity] || 0
-    @causal = params.has_key?(:causal) ? !!/true/i.match(params[:causal]) : true
-    @acausal_target_frame = params[:acausal_target_frame]
-
-    if params.has_key?(:actionable_type) && params.has_key?(:actionable_id)
-      klass_name = params[:actionable_type].camelize
-      actionable_klass = klass_name.constantize
-      @actionable = actionable_klass.find(params[:actionable_id])
-    end
-
-    game_event = @match.game.game_event_list.game_events.build({
-      player: @player,
-      causal: @causal,
-      frame: @match.game.current_frame,
-      acausal_target_frame: @acausal_target_frame
-    })
-    game_event.save
-
-    player_action = game_event.create_player_action({
-      player_action_type: @player_action_type,
-      player: @player,
-      quantity: @quantity,
-      actionable: @actionable
-    })
-
-    game_event.update_attribute(:player_action, player_action)
-
-    begin
-      player_action.enact
-    rescue Exceptions::TimelineError => e
-      puts "\n" + "-" * 100
-      puts "#{e.class}: #{e.message}"
-      e.backtrace[0..5].each do |b|
-        puts "  " + b.to_s
-      end
-      puts "-" * 100 + "\n"
-    end
-
-    unless @causal
-      @game.require_advance_game_version!
-    end
-
-    render :timelinegame, layout: false
+    render 'play/timelinegame'
+  rescue StandardError => e
+    render 'play/timelinegame', status: 500
   end
 end

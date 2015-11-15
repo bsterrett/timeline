@@ -13,7 +13,8 @@ Rails.application.routes.draw do
 
   get '/' => 'play#index'
 
-  get 'play' => 'play#new_match'
+  post '/match' => 'match#create'
+  get '/match(/:id)' => 'match#show'
 
   get 'match/:match_id/advance_game' => 'play#advance_game'
   get 'advance_game' => 'play#advance_game'

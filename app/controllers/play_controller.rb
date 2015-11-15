@@ -6,109 +6,11 @@ class PlayController < ApplicationController
     render :timelinegame
   end
 
-  def new_match
-    @match = Match.new
-
-    user_ids = params.delete(:user_ids)
-
-    begin
-      @match.users = user_ids.map { |user_id| User.find(user_id)}
-    rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
-    end
-
-    @game = Game.new
-
-    @match.users.each do |user|
-      @game.players << Player.create({ username: user.username })
-    end
-
-
-    # TODO: Create map fabricator
-    #   should build a map and fixtures from a template
-    #   then it should populate the map with game pieces for all players
-
-    begin
-      map = Map.find(params[:map_id])
-    rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
-    end
-
-    @game.players.each do |player|
-      player.map_base_spawns.create({
-        map: map,
-        location: 0,
-        position: 0
-      })
-
-      player.map_tower_spawns.create([{
-        map: map,
-        location: 5,
-        position: 0
-      },{
-        map: map,
-        location: 15,
-        position: 1
-      },{
-        map: map,
-        location: 25,
-        position: 2
-      }])
-
-      player.map_troop_spawns.create({
-        map: map,
-        location: 50,
-        position: 0
-      })
-    end
-
-    @game.players.each do |player|
-      player.map_base_spawns.each do |map_base_spawn|
-        player.bases.create({
-          location: map_base_spawn.location,
-          position: map_base_spawn.position
-        })
-      end
-    end
-
-    @game.map = map
-
-    ruleset = GameRuleset.new
-    ruleset.max_players = @game.map.max_players || 2
-    ruleset.max_resources = 100000000000
-    ruleset.max_player_towers = @game.map.max_player_towers || 3
-    ruleset.max_troops = 1000
-    ruleset.max_frames = 100000000000
-    ruleset.frame_speed_modifier = 1
-    ruleset.resource_speed_modifier = 1
-    ruleset.troop_speed_modifier = 1
-    ruleset.base_health_modifier = 1
-    ruleset.fractional_health_constant = 1000.0
-    ruleset.handshake_bounded_acausal_actions = true
-    ruleset.rebase_to_oldest_frame_on_acausal_action = true
-    ruleset.freeze
-    @game.game_ruleset = ruleset
-
-    @game.game_status = GameStatus.find_by_name('not_started')
-    @game.save
-
-    @match.game = @game
-    @match.save
-
-    session[:match_id] = @match.id
-
-    render :timelinegame, layout: false
-  rescue StandardError => e
-    render :timelinegame, layout: false, status: 500 and return
-  end
-
   def advance_game
     begin
       @match = Match.find(session[:match_id] || params[:match_id])
     rescue ActiveRecord::RecordNotFound => e
-      flash[:errors] = e.message.to_s
+      flash.now[:errors] = e.message.to_s
       render :timelinegame, layout: false, status: 500 and return
     end
     @game = @match.game

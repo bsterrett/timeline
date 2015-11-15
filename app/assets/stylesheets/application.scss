@@ -40,6 +40,12 @@
 
 #ajax-helper-text-navbar {
   padding: 0;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+#ajax-helper-text-navbar.container  {
+  width: inherit;
 }
 
 .debug-panel {
@@ -61,4 +67,9 @@
 
 .debug-panel h3 {
   margin-top: 10px;
+}
+
+#search_addresses {
+  width: 65px;
+  margin-left: 10px;
 }

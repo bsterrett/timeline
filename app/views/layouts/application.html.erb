@@ -8,18 +8,20 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
   <script>
-  function sendAjaxTestHelperRequest(request_url, request_data) {
+  function sendAjaxTestHelperRequest(request_url, request_data, request_verb) {
     $.ajax({
       url: request_url,
       data: request_data,
-      method: 'GET',
+      method: request_verb,
       success: function(data) {
         document.getElementById('ajax-helper-text-container').innerHTML = data;
+        $('.ajax-helper-links').dropdown(); //fix buggy menu
       },
       error: function(data) {
         turnContinuousRefreshOff();
-        document.getElementById('ajax-helper-text-container').innerHTML = data;
+        document.getElementById('ajax-helper-text-container').innerHTML = data['responseText'];
         console.log(data);
+        $('.ajax-helper-links').dropdown(); //fix buggy menu
       }
     });
   }
@@ -32,16 +34,22 @@
     return JSON.parse($('#ajax-test-helper-data').val());
   }
 
-  function setAjaxHelperURL(url, options) {
+  function getRequestVerb() {
+    return $('#ajax-test-helper-verb').val();
+  }
+
+  function setAjaxHelperURL(url, options, verb) {
     $('#ajax-test-helper-url').val(url);
     $('#ajax-test-helper-data').val(JSON.stringify(options));
+    $('#ajax-test-helper-verb').val(verb.toUpperCase());
+    $('#search_addresses').text(verb.toUpperCase());
     return false;
   }
 
   function continuouslyAdvanceGame() {
     var continuousRefresh = setInterval(function() {
       if($('#refresh-on').hasClass('active')) {
-        sendAjaxTestHelperRequest('/match/1/advance_game',{});
+        sendAjaxTestHelperRequest('/match/1/advance_game',{},'GET');
       } else {
         clearInterval(continuousRefresh);
       }
@@ -84,19 +92,21 @@
             <div class="form-group">
               <input type="text" id="ajax-test-helper-url" class="form-control" placeholder='/'>
               <input type="text" id="ajax-test-helper-data" class="form-control" placeholder='{}'>
+              <input type="hidden" id="ajax-test-helper-verb" placeholder='GET'>
             </div>
-            <button id="search_addresses" class="btn btn-default" onclick="sendAjaxTestHelperRequest(getRequestUrl(), getRequestData());">Request</button>
+            <button id="search_addresses" class="btn btn-default" onclick="sendAjaxTestHelperRequest(getRequestUrl(), getRequestData(), getRequestVerb());">GET</button>
           </div>
         </li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Samples <span class="caret"></span></a>
           <ul class="ajax-helper-links dropdown-menu">
-            <li><a href="#" onclick="setAjaxHelperURL('/play',{'user_ids':[1,2], 'map_id':1});return false;">New Game</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/advance_game',{});">Advance Game</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_troop',{'actionable_type':'troop_type','actionable_id':1,'quantity':1});">Build Troop</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_tower',{'actionable_type':'tower_type','actionable_id':1,'quantity':1});">Build Tower</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/handshake',{});">Handshake</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/warp',{'causal':false,'acausal_target_frame':3});">Warp</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/match',{'user_ids':[1,2], 'map_id':1}, 'POST');return false;">New Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/match',{}, 'GET');return false;">Show Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/advance_game',{},'GET');">Advance Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_troop',{'actionable_type':'troop_type','actionable_id':1,'quantity':1},'GET');">Build Troop</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_tower',{'actionable_type':'tower_type','actionable_id':1,'quantity':1},'GET');">Build Tower</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/handshake',{},'GET');">Handshake</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/warp',{'causal':false,'acausal_target_frame':3},'GET');">Warp</a></li>
           </ul>
         </li>
       </ul>
@@ -105,12 +115,6 @@
 </nav>
 <div class="navbar-fixer">&nbsp;</div>
 <div id="ajax-helper-text-container">
-<% if flash[:notice] %>
-  <div class="notice"><%= flash[:notice] %></div>
-<% end %>
-<% if flash[:errors] %>
-  <div class="errors"><%= flash[:errors] %></div>
-<% end %>
 
 <%= yield %>
 
