@@ -82,7 +82,8 @@ class MatchController < ApplicationController
       player.map_base_spawns.each do |map_base_spawn|
         player.bases.create({
           location: map_base_spawn.location,
-          position: map_base_spawn.position
+          position: map_base_spawn.position,
+          base_type: BaseType.find(1)
         })
       end
     end
@@ -113,6 +114,7 @@ class MatchController < ApplicationController
 
     render 'play/timelinegame'
   rescue StandardError => e
+    flash.now[:errors] = "#{e.message}\n\n#{e.backtrace.inspect[0..1000]}"
     render 'play/timelinegame', status: 500
   end
 end

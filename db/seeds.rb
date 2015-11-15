@@ -25,11 +25,15 @@ game_statuses = GameStatus.create([
 ])
 
 troop_types = TroopType.create([
-  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 0, base_speed: 1, base_cost: 100 }
+  { name: 'gi', display_name: 'General Infantry', base_attack: 1, base_defense: 0, base_speed: 1, base_cost: 100, base_range: 1 }
 ])
 
 tower_types = TowerType.create([
-  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 0, base_speed: 1, base_cost: 100 }
+  { name: 'arrow_tower', display_name: 'Arrow Tower', base_attack: 1, base_defense: 0, base_speed: 0, base_cost: 100, base_range: 2 }
+])
+
+base_types = BaseType.create([
+  { name: 'fortress', display_name: 'Fortress', base_attack: 1, base_defense: 0, base_speed: 0, base_range: 2 }
 ])
 
 maps = Map.create([

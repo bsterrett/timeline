@@ -7,7 +7,7 @@ class Troop < ActiveRecord::Base
   VALID_TARGETS = [Base]
 
   def attack_best_target targets
-    attack_first_target in_range(targets)
+    attack_first_target in_range(targets) unless dead?
   end
 
   def attack_first_target targets
@@ -15,18 +15,20 @@ class Troop < ActiveRecord::Base
       target.living? and can_attack? target
     end.first
 
-    attack target unless target.nil?
+    attack target unless dead? or target.nil?
   end
 
   def attack target
-    target.send(:receive_damage, current_attack/8.0)
+    target.receive_damage current_attack unless dead?
   end
 
   def receive_damage damage
+    starting_health = self.health
     effective_damage = damage * (10.0 - current_defense) / 10.0
     self.health -= effective_damage
     self.health = 0.0 if self.health < 0.0
     self.save
+    starting_health - self.health
   end
 
   def advance_location
@@ -34,15 +36,15 @@ class Troop < ActiveRecord::Base
   end
 
   def current_defense
-    level
+    troop_type.base_defense + level
   end
 
   def current_attack
-    level + 1
+    (troop_type.base_attack + level)/8.0
   end
 
   def current_range
-    level + 1
+    troop_type.base_range
   end
 
   def in_range targets

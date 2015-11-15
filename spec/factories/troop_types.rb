@@ -7,6 +7,7 @@ FactoryGirl.define do
     base_attack 1
     base_defense 0
     base_speed 1
+    base_range 1
     base_cost 100
   end
 end

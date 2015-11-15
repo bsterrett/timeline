@@ -11,18 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151113043731) do
+ActiveRecord::Schema.define(version: 20151115084024) do
 
-  create_table "bases", force: :cascade do |t|
-    t.integer  "player_id",  limit: 4
-    t.decimal  "health",               precision: 11, scale: 10, default: 1.0, null: false
-    t.integer  "level",      limit: 4,                           default: 0,   null: false
-    t.integer  "location",   limit: 4,                                         null: false
-    t.integer  "position",   limit: 4,                                         null: false
-    t.datetime "created_at",                                                   null: false
-    t.datetime "updated_at",                                                   null: false
+  create_table "base_types", force: :cascade do |t|
+    t.string  "name",         limit: 255, null: false
+    t.string  "display_name", limit: 255, null: false
+    t.integer "base_attack",  limit: 4,   null: false
+    t.integer "base_defense", limit: 4,   null: false
+    t.integer "base_range",   limit: 4,   null: false
+    t.integer "base_speed",   limit: 4,   null: false
   end
 
+  create_table "bases", force: :cascade do |t|
+    t.integer  "player_id",    limit: 4
+    t.decimal  "health",                 precision: 11, scale: 10, default: 1.0, null: false
+    t.integer  "level",        limit: 4,                           default: 0,   null: false
+    t.integer  "location",     limit: 4,                                         null: false
+    t.integer  "position",     limit: 4,                                         null: false
+    t.datetime "created_at",                                                     null: false
+    t.datetime "updated_at",                                                     null: false
+    t.integer  "base_type_id", limit: 4
+  end
+
+  add_index "bases", ["base_type_id"], name: "index_bases_on_base_type_id", using: :btree
   add_index "bases", ["player_id"], name: "index_bases_on_player_id", using: :btree
 
   create_table "game_event_lists", force: :cascade do |t|
@@ -182,6 +193,7 @@ ActiveRecord::Schema.define(version: 20151113043731) do
     t.integer "base_defense", limit: 4,   null: false
     t.integer "base_speed",   limit: 4,   null: false
     t.integer "base_cost",    limit: 4,   null: false
+    t.integer "base_range",   limit: 4,   null: false
   end
 
   create_table "towers", force: :cascade do |t|
@@ -205,6 +217,7 @@ ActiveRecord::Schema.define(version: 20151113043731) do
     t.integer "base_defense", limit: 4,   null: false
     t.integer "base_speed",   limit: 4,   null: false
     t.integer "base_cost",    limit: 4,   null: false
+    t.integer "base_range",   limit: 4,   null: false
   end
 
   create_table "troops", force: :cascade do |t|
@@ -226,6 +239,7 @@ ActiveRecord::Schema.define(version: 20151113043731) do
     t.datetime "updated_at",             null: false
   end
 
+  add_foreign_key "bases", "base_types"
   add_foreign_key "bases", "players"
   add_foreign_key "game_event_lists", "games"
   add_foreign_key "game_events", "game_event_lists"

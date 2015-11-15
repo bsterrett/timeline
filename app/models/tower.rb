@@ -7,45 +7,55 @@ class Tower < ActiveRecord::Base
   VALID_TARGETS = [Troop]
 
   def attack_best_target targets
-    attack_first_target in_range(targets)
+    attack_first_target in_range(targets) unless dead?
   end
 
   def attack_first_target targets
     target = targets.select do |target|
-      target.living? and VALID_TARGETS.include? target.class
+      target.living? and can_attack? target
     end.first
 
-    attack target unless target.nil?
+    attack target unless dead? or target.nil?
   end
 
   def attack target
-    target.send(:receive_damage, current_attack/2.0)
+    target.receive_damage current_attack unless dead?
   end
 
   def receive_damage damage
+    starting_health = self.health
     effective_damage = damage * (10.0 - current_defense) / 10.0
     self.health -= effective_damage
     self.health = 0.0 if self.health < 0.0
     self.save
+    starting_health - self.health
   end
 
   def current_defense
-    level
+    tower_type.base_defense + level
   end
 
   def current_attack
-    level + 1
+    (tower_type.base_attack + level)/2.0
   end
 
   def current_range
-    ((level + 1) * 1.5).ceil
+    ((level + tower_type.base_range) * 1.5).ceil
   end
 
-  def in_range(targets)
+  def in_range targets
     targets.select { |target| (target.location - self.location).abs <= current_range }
   end
 
   def living?
     self.health > 0.0
+  end
+
+  def dead?
+    !living?
+  end
+
+  def can_attack? target
+    VALID_TARGETS.include? target.class
   end
 end

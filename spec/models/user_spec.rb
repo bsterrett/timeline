@@ -2,12 +2,12 @@ require 'rails_helper'
 
 describe User do
   it 'cannot be saved without username' do
-    user = User.new
+    user = build(:user, username: nil)
     expect{ user.save }.to raise_error(ActiveRecord::StatementInvalid)
   end
 
   it 'can be saved with username' do
-    user = create(:user, username: 'Ben')
+    user = build(:user, username: 'Ben')
     expect{ user.save }.to_not raise_error
     expect(user.username).to eq('Ben')
   end

@@ -44,11 +44,13 @@
     <% end %>
             <p>Map id: <%= @game.map.id %></p>
           </div>
+    <% if @game.game_event_list %>
           <div class="col-xs-6 col-lg-2">
             <h4>Game Event List</h4>
             <p>Id: <%= @game.game_event_list.id %></p>
             <p>Total events: <%= @game.game_event_list.game_events.size %></p>
           </div>
+    <% end %>
   <% end %>
         </div>
       </div>
