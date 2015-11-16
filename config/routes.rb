@@ -19,9 +19,13 @@ Rails.application.routes.draw do
   get 'match/:match_id/advance_game' => 'play#advance_game'
   get 'advance_game' => 'play#advance_game'
 
-  get 'match/:match_id/player/:player_id/action/:player_action_type'  => 'play#create_player_action'
-  get 'player/:player_id/action/:player_action_type'  => 'play#create_player_action'
-  get 'action/:player_action_type'  => 'play#create_player_action'
+  # get 'match/:match_id/player/:player_id/action/:player_action_type'  => 'play#create_player_action'
+  # get 'player/:player_id/action/:player_action_type'  => 'play#create_player_action'
+  # get 'action/:player_action_type'  => 'play#create_player_action'
+
+  post 'match/:match_id/player/:player_id/action/:player_action_type'  => 'player_action#create'
+  post 'player/:player_id/action/:player_action_type'  => 'player_action#create'
+  post 'action/:player_action_type'  => 'player_action#create'
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products

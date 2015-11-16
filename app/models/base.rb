@@ -1,6 +1,7 @@
 class Base < ActiveRecord::Base
   include ImmobileGamePiece
   include AttackingGamePiece
+  include AttackableGamePiece
 
   belongs_to :player
   belongs_to :base_type

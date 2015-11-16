@@ -1,6 +1,7 @@
 class Troop < ActiveRecord::Base
   include MobileGamePiece
   include AttackingGamePiece
+  include AttackableGamePiece
 
   belongs_to :player
   belongs_to :troop_type

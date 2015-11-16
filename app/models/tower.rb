@@ -1,6 +1,7 @@
 class Tower < ActiveRecord::Base
   include ImmobileGamePiece
   include AttackingGamePiece
+  include AttackableGamePiece
 
   belongs_to :player
   belongs_to :tower_type
