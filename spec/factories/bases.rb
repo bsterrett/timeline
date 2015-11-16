@@ -2,6 +2,7 @@ FactoryGirl.define do
   sequence(:base_position) { |n| n }
 
   factory :base, aliases: [:living_base] do
+    base_type
     health 1.0
     level 0
     location 0

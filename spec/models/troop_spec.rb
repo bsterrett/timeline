@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Troop do
+  it 'should filter by living'
+
   context 'after creation' do
     it 'should be living' do
       troop = create(:troop)
@@ -26,6 +28,9 @@ describe Troop do
       troop = create(:troop)
       expect(troop.current_range).to eq(1)
     end
+
+    it 'should have 0 current speed'
+    it 'should have 0 base speed'
   end
 
   context 'when leveled up' do
@@ -64,7 +69,7 @@ describe Troop do
     it 'should not attack' do
       troop = create(:dead_troop)
       tower = create(:tower)
-      expect{ troop.attack([tower]) }.to_not change(tower, :health)
+      expect{ troop.attack(tower) }.to_not change(tower, :health)
     end
 
     context 'when advancing location' do
@@ -178,4 +183,6 @@ describe Troop do
     expect(troop).to respond_to(:in_range)
     expect(troop.in_range([base])).to be_empty
   end
+
+    it 'can attack in-range targets'
 end
