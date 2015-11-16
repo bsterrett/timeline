@@ -8,4 +8,7 @@ module Exceptions
   class GamePieceError < TimelineError; end
   class ImmobilePieceError < GamePieceError; end
   class InvulnerablePieceError < GamePieceError; end
+
+  class MapFixtureError < TimelineError; end
+  class LockedSpawnError < MapFixtureError; end
 end

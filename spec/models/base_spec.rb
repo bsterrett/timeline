@@ -4,72 +4,76 @@ describe Base do
   it 'should filter by living'
 
   context 'after creation' do
+    before(:all) do
+      @base = create(:base)
+    end
+
     it 'should be living' do
-      base = create(:base)
-      expect(base).to be_living
+      expect(@base).to be_living
     end
 
     it 'should not be dead' do
-      base = create(:base)
-      expect(base).to_not be_dead
+      expect(@base).to_not be_dead
     end
 
     it 'should have less than 1 current attack' do
-      base = create(:base)
-      expect(base.current_attack).to be < 1
+      expect(@base.current_attack).to be < 1
     end
 
     it 'should have 0 current defense' do
-      base = create(:base)
-      expect(base.current_defense).to eq(0)
+      expect(@base.current_defense).to eq(0)
     end
 
     it 'should have greater than 1 current range' do
-      base = create(:base)
-      expect(base.current_range).to be > 1
+      expect(@base.current_range).to be > 1
     end
 
     it 'should have 0 current speed'
     it 'should have 0 base speed'
+
+    after(:all) do
+      @base.destroy
+    end
   end
 
   context 'when leveled up' do
+    before(:all) do
+      @base1 = create(:base, level: 0)
+      @base2 = create(:base, level: 2)
+    end
+
     it 'should have increased current attack' do
-      base1 = create(:base, level: 0)
-      base2 = create(:base, level: 2)
-      expect(base2.current_attack).to be > base1.current_attack
+
+      expect(@base2.current_attack).to be > @base1.current_attack
     end
 
     it 'should have increased current defense' do
-      base1 = create(:base, level: 0)
-      base2 = create(:base, level: 2)
-      expect(base2.current_defense).to be > base1.current_defense
+      expect(@base2.current_defense).to be > @base1.current_defense
     end
 
     it 'should have increased current range' do
-      base1 = create(:base, level: 0)
-      base2 = create(:base, level: 2)
-      expect(base2.current_range).to be > base1.current_range
+      expect(@base2.current_range).to be > @base1.current_range
     end
   end
 
   context 'when dead' do
+    before(:all) do
+      @base = create(:dead_base)
+    end
+
     it 'should not be living' do
-      base = create(:dead_base)
-      expect(base).to respond_to('living?')
-      expect(base).to_not be_living
+      expect(@base).to respond_to('living?')
+      expect(@base).to_not be_living
     end
 
     it 'should be dead' do
-      base = create(:dead_base)
-      expect(base).to respond_to('dead?')
-      expect(base).to be_dead
+      expect(@base).to respond_to('dead?')
+      expect(@base).to be_dead
     end
 
     it 'should not attack' do
-      base = create(:dead_base)
       troop = create(:troop)
-      expect{ base.attack(troop) }.to_not change(troop, :health)
+      expect{ @base.attack(troop) }.to_not change(troop, :health)
     end
 
     context 'when receiving damage' do
@@ -78,6 +82,10 @@ describe Base do
         expect(base).to respond_to(:receive_damage)
         expect{ base.receive_damage(0.5) }.to_not change(base, :health)
       end
+    end
+
+    after(:all) do
+      @base.destroy
     end
   end
 
@@ -141,32 +149,39 @@ describe Base do
     expect{ base.advance_location }.to raise_error(Exceptions::ImmobilePieceError)
   end
 
-  it 'cannot attack bases' do
-    base1 = create(:base)
-    base2 = create(:base)
-    expect(base1.can_attack?(base2)).to eq(false)
-  end
+  context 'when attacking' do
+    before(:all) do
+      @base = create(:base)
+    end
 
-  it 'cannot attack towers' do
-    base = create(:base)
-    tower = create(:tower)
-    expect(base.can_attack?(tower)).to eq(false)
-  end
+    it 'cannot attack bases' do
+      base2 = create(:base)
+      expect(@base.can_attack?(base2)).to eq(false)
+    end
 
-  it 'can attack troops' do
-    base = create(:base)
-    troop = create(:troop)
-    expect(base.can_attack?(troop)).to eq(true)
-  end
+    it 'cannot attack towers' do
+      tower = create(:tower)
+      expect(@base.can_attack?(tower)).to eq(false)
+    end
 
-  it 'cannot attack out-of-range targets' do
-    base = create(:base, location: 0)
-    troop = create(:troop, location: 50)
-    expect(base).to respond_to(:current_range)
-    expect(base.current_range).to be < (base.location - troop.location).abs
-    expect(base).to respond_to(:in_range)
-    expect(base.in_range([troop])).to be_empty
-  end
+    it 'can attack troops' do
+      troop = create(:troop)
+      expect(@base.can_attack?(troop)).to eq(true)
+    end
 
-  it 'can attack in-range targets'
+    it 'cannot attack out-of-range targets' do
+      base = create(:base, location: 0)
+      troop = create(:troop, location: 50)
+      expect(base).to respond_to(:current_range)
+      expect(base.current_range).to be < (base.location - troop.location).abs
+      expect(base).to respond_to(:in_range)
+      expect(base.in_range([troop])).to be_empty
+    end
+
+    it 'can attack in-range targets'
+
+    after(:all) do
+      @base.destroy
+    end
+  end
 end

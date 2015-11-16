@@ -80,11 +80,11 @@ class MatchController < ApplicationController
 
     @game.players.each do |player|
       player.map_base_spawns.each do |map_base_spawn|
-        player.bases.create({
-          location: map_base_spawn.location,
-          position: map_base_spawn.position,
+        base_attributes = {
           base_type: BaseType.find(1)
-        })
+        }
+
+        map_base_spawn.spawn base_attributes
       end
     end
 

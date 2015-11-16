@@ -111,12 +111,7 @@ describe Troop do
         expect(@troop).to respond_to(:attack)
       end
 
-      context 'receives actual damage dealt' do
-        it 'when target has zero defense'
-        it 'when target has nonzero defense'
-        it 'when the target is killed'
-        it 'when more damage is applied than the targets health'
-      end
+      it 'deals damage'
     end
 
     context 'when receiving damage' do
@@ -201,6 +196,13 @@ describe Troop do
     end
 
     it 'can attack in-range targets'
+
+    context 'receives actual damage dealt' do
+      it 'when target has zero defense'
+      it 'when target has nonzero defense'
+      it 'when the target is killed'
+      it 'when more damage is applied than the targets health'
+    end
 
     after(:all) do
       @troop.destroy
