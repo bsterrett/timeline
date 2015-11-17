@@ -21,4 +21,8 @@ class Troop < ActiveRecord::Base
   def current_range
     troop_type.base_range
   end
+
+  def current_speed
+    troop_type.base_speed
+  end
 end

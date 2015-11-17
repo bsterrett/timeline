@@ -13,7 +13,7 @@ class MapBaseSpawn < ActiveRecord::Base
       spawn_lock! if LOCK_AFTER_SPAWN
       SPAWN_CLASS.send :create, merge_spawn_attributes(piece_attributes)
     else
-      raise Exceptions::LockedSpawnError, "Could not create #{SPAWN_CLASS} for at locked spawn #{self.class} #{self.id}"
+      raise Exceptions::LockedSpawnError, "Could not create #{SPAWN_CLASS} for at locked spawn #{self.class} id #{self.id}"
     end
   end
 

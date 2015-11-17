@@ -37,7 +37,7 @@ class PlayerAction < ActiveRecord::Base
             troop_type: actionable
           }
 
-          troop = player.get_next_available_troop_spawn.spawn troop_attributes
+          troop = troop_spawn.spawn troop_attributes
 
           if troop.present?
             deduct_actionable_cost_from_resources
