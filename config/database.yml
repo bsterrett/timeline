@@ -3,3 +3,5 @@ production:
   database: timeline
   username: <%= ENV['DATABASE_USER'] %>
   password: <%= ENV['DATABASE_PASWORD'] %>
+  host: <%= ENV['DATABASE_URL'] %>
+  port: 3306
