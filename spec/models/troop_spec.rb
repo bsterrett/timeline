@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 describe Troop do
+  it 'cannot be created without a location' do
+    troop = build(:troop, location: nil)
+    expect{ troop.save }.to raise_error(ActiveRecord::StatementInvalid)
+  end
+
   context 'when filtering by living' do
     before(:all) do
       @player = create(:player_with_game_pieces)
@@ -9,6 +14,7 @@ describe Troop do
     end
 
     after(:all) do
+      # TODO shouldn't have to do all this, fixture should do it
       @player.bases.map(&:destroy)
       @player.towers.map(&:destroy)
       @player.troops.map(&:destroy)
@@ -30,11 +36,6 @@ describe Troop do
     it 'should not have living troops' do
       expect(@player.troops.living.select { |troop| troop.health > 0.0 }.length).to be >= 5
     end
-  end
-
-  it 'cannot be created without a location' do
-    troop = build(:troop, location: nil)
-    expect{ troop.save }.to raise_error(ActiveRecord::StatementInvalid)
   end
 
   context 'after creation' do
@@ -59,15 +60,15 @@ describe Troop do
     end
 
     it 'should have 0 current defense' do
-      expect(@troop.current_defense).to eq(0)
+      expect(@troop.current_defense).to be == 0
     end
 
     it 'should have 1 current range' do
-      expect(@troop.current_range).to eq(1)
+      expect(@troop.current_range).to be == 1
     end
 
     it 'should have 1 current speed' do
-      expect(@troop.current_speed).to eq(1)
+      expect(@troop.current_speed).to be == 1
     end
   end
 
@@ -90,11 +91,11 @@ describe Troop do
       expect(@troop2.current_defense).to be > @troop1.current_defense
     end
 
-    it 'should have not increased current range' do
+    it 'should not have increased current range' do
       expect(@troop2.current_range).to be == @troop1.current_range
     end
 
-    it 'should have not increased current speed' do
+    it 'should not have increased current speed' do
       expect(@troop2.current_speed).to be == @troop1.current_speed
     end
   end

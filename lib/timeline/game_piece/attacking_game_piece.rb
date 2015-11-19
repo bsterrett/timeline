@@ -6,11 +6,11 @@ module AttackingGamePiece
   end
 
   def attack_first_target targets
-    target = targets.select do |target|
+    first_target = targets.select do |target|
       target.living? and can_attack? target
     end.first
 
-    attack target unless dead? or target.nil?
+    attack first_target unless dead? or target.nil?
   end
 
   def attack target
