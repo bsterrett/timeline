@@ -10,7 +10,7 @@ class PlayController < ApplicationController
     begin
       @match = Match.find(session[:match_id] || params[:match_id])
     rescue ActiveRecord::RecordNotFound => e
-      Rails.logger.error "PLAY CONTROLLER ERROR #{e.message}\n\n#{e.backtrace}"
+      puts "PLAY CONTROLLER ERROR #{e.message}\n\n#{e.backtrace}"
       flash.now[:errors] = e.message.to_s
       render :timelinegame, layout: false, status: 500 and return
     end
