@@ -27,7 +27,12 @@
   }
 
   function getRequestUrl() {
-    return 'http://localhost:3001' + $('#ajax-test-helper-url').val();
+    if(document.location.hostname == 'localhost') {
+      return 'http://localhost:3001' + $('#ajax-test-helper-url').val();
+    } else {
+      return 'http://sheltered-river-3195.herokuapp.com' + $('#ajax-test-helper-url').val();
+    }
+
   }
 
   function getRequestData() {
