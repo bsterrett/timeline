@@ -15,24 +15,19 @@
       method: request_verb,
       success: function(data) {
         document.getElementById('ajax-helper-text-container').innerHTML = data;
-        $('.ajax-helper-links').dropdown(); //fix buggy menu
+        $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
       },
       error: function(data) {
         turnContinuousRefreshOff();
         document.getElementById('ajax-helper-text-container').innerHTML = data['responseText'];
         console.log(data);
-        $('.ajax-helper-links').dropdown(); //fix buggy menu
+        $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
       }
     });
   }
 
   function getRequestUrl() {
-    if(document.location.hostname == 'localhost') {
-      return 'http://localhost:3001' + $('#ajax-test-helper-url').val();
-    } else {
-      return 'https://sheltered-river-3195.herokuapp.com' + $('#ajax-test-helper-url').val();
-    }
-
+    return document.location.origin + $('#ajax-test-helper-url').val();
   }
 
   function getRequestData() {
