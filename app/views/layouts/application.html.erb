@@ -9,21 +9,26 @@
   <%= csrf_meta_tags %>
   <script>
   function sendAjaxTestHelperRequest(request_url, request_data, request_verb) {
-    $.ajax({
-      url: request_url,
-      data: request_data,
-      method: request_verb,
-      success: function(data) {
-        document.getElementById('ajax-helper-text-container').innerHTML = data;
-        $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
-      },
-      error: function(data) {
-        turnContinuousRefreshOff();
-        document.getElementById('ajax-helper-text-container').innerHTML = data['responseText'];
-        console.log(data);
-        $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
-      }
-    });
+    if( !$('#search_addresses').hasClass('disabled') ) {
+      $('#search_addresses').addClass('disabled');
+      $.ajax({
+        url: request_url,
+        data: request_data,
+        method: request_verb,
+        success: function(data) {
+          document.getElementById('ajax-helper-text-container').innerHTML = data;
+          $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
+          $('#search_addresses').removeClass('disabled');
+        },
+        error: function(data) {
+          turnContinuousRefreshOff();
+          document.getElementById('ajax-helper-text-container').innerHTML = data['responseText'];
+          console.log(data);
+          $('.ajax-helper-links').dropdown(); //fix for bs buggy menu
+          $('#search_addresses').removeClass('disabled');
+        }
+      });
+    }
   }
 
   function getRequestUrl() {
@@ -47,14 +52,23 @@
   }
 
   function continuouslyAdvanceGame() {
+    var continuousAdvance = setInterval(function() {
+      if($('#refresh-on').hasClass('active')) {
+        sendAjaxTestHelperRequest('/advance_game',{},'GET');
+      } else {
+        clearInterval(continuousAdvance);
+      }
+    }, 1000);
+  }
+
+  function continuouslyRefreshGame() {
     var continuousRefresh = setInterval(function() {
       if($('#refresh-on').hasClass('active')) {
-        sendAjaxTestHelperRequest('/match/1/advance_game',{},'GET');
+        sendAjaxTestHelperRequest('/match',{},'GET');
       } else {
         clearInterval(continuousRefresh);
       }
     }, 1000);
-
   }
 
   function turnContinuousRefreshOn() {
@@ -62,7 +76,7 @@
     $('#refresh-on').removeClass('btn-default');
     $('#refresh-off').addClass('btn-default');
     $('#refresh-off').removeClass('active btn-danger');
-    continuouslyAdvanceGame();
+    continuouslyRefreshGame();
   }
 
   function turnContinuousRefreshOff() {
@@ -101,7 +115,8 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Samples <span class="caret"></span></a>
           <ul class="ajax-helper-links dropdown-menu">
             <li><a href="#" onclick="setAjaxHelperURL('/match',{'user_ids':[1,2], 'map_id':1}, 'POST');return false;">New Game</a></li>
-            <li><a href="#" onclick="setAjaxHelperURL('/match',{}, 'GET');return false;">Show Game</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/match',{}, 'GET');return false;">Refresh Display</a></li>
+            <li><a href="#" onclick="setAjaxHelperURL('/begin',{}, 'GET');return false;">Start Game</a></li>
             <li><a href="#" onclick="setAjaxHelperURL('/advance_game',{},'GET');">Advance Game</a></li>
             <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_troop',{'actionable_type':'troop_type','actionable_id':1,'quantity':1},'POST');">Build Troop</a></li>
             <li><a href="#" onclick="setAjaxHelperURL('/player/1/action/build_tower',{'actionable_type':'tower_type','actionable_id':1,'quantity':1},'POST');">Build Tower</a></li>

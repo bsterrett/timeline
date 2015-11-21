@@ -1,13 +1,13 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.4'
-gem 'mysql2', '~> 0.3.18'
+gem 'rack-timeout'
 gem 'sass-rails', '~> 5.0'
 gem 'bootstrap-sass'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'kgio'
-# gem 'unicorn'
+gem 'puma'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -24,8 +24,11 @@ gem 'jquery-turbolinks'
 # gem 'capistrano-rails', group: :development
 
 group :production do
-  gem 'pg'
   gem 'rails_12factor'
+end
+
+group :production, :test do
+  gem 'pg'
 end
 
 group :development, :test do
@@ -43,4 +46,6 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  gem 'mysql2', '~> 0.3.18'
 end

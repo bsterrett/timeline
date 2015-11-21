@@ -11,6 +11,21 @@ class MatchController < ApplicationController
     render 'play/timelinegame', status: 500
   end
 
+  def begin
+    @match = Match.find(session[:match_id] || params[:id])
+    @game = @match.game
+
+    if @game.status == 'not_started'
+      @game.game_status = GameStatus.find_by_name('in_progress')
+      @game.save
+    end
+
+    render 'play/timelinegame'
+  rescue StandardError => e
+    flash.now[:errors] = "#{e.message}\n\n#{e.backtrace.inspect[0..1000]}"
+    render 'play/timelinegame', status: 500
+  end
+
   def create
     @match = Match.new
 

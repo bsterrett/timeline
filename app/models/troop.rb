@@ -6,6 +6,7 @@ class Troop < ActiveRecord::Base
   belongs_to :player
   belongs_to :troop_type
 
+  default_scope { includes(:troop_type) }
   scope :living, -> { where('health > 0.0') }
 
   VALID_TARGETS = [Base]

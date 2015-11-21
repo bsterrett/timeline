@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   get 'match/:match_id/advance_game' => 'play#advance_game'
   get 'advance_game' => 'play#advance_game'
 
+  get 'match/:match_id/begin' => 'match#begin'
+  get 'begin' => 'match#begin'
+
   # get 'match/:match_id/player/:player_id/action/:player_action_type'  => 'play#create_player_action'
   # get 'player/:player_id/action/:player_action_type'  => 'play#create_player_action'
   # get 'action/:player_action_type'  => 'play#create_player_action'

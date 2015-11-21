@@ -6,6 +6,7 @@ class Tower < ActiveRecord::Base
   belongs_to :player
   belongs_to :tower_type
 
+  default_scope { includes(:tower_type) }
   scope :living, -> { where('health > 0.0') }
 
   VALID_TARGETS = [Troop]
