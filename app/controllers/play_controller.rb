@@ -16,7 +16,7 @@ class PlayController < ApplicationController
     end
     @game = @match.game
 
-    render :timelinegame, layout: false and return if @game.win_condition?
+    render nothing: true and return if @game.win_condition?
 
     if @game.status == 'not_started'
       @game.game_status = GameStatus.find_by_name('in_progress')
@@ -31,6 +31,6 @@ class PlayController < ApplicationController
       @game.save
     end
 
-    render :timelinegame, layout: false
+    render nothing: true
   end
 end
