@@ -43,6 +43,10 @@
     return $('#ajax-test-helper-verb').val();
   }
 
+  function getRefreshRate() {
+    return parseInt($('#ajax-test-helper-refresh-rate').val());
+  }
+
   function setAjaxHelperURL(url, options, verb) {
     $('#ajax-test-helper-url').val(url);
     $('#ajax-test-helper-data').val(JSON.stringify(options));
@@ -58,7 +62,7 @@
       } else {
         clearInterval(continuousAdvance);
       }
-    }, 1000);
+    }, getRefreshRate());
   }
 
   function continuouslyRefreshGame() {
@@ -68,7 +72,7 @@
       } else {
         clearInterval(continuousRefresh);
       }
-    }, 1000);
+    }, getRefreshRate());
   }
 
   function turnContinuousRefreshOn() {
@@ -95,6 +99,13 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
+        <li>
+          <div class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" id="ajax-test-helper-refresh-rate" class="form-control" value='1000'>
+            </div>
+          </div>
+        </li>
         <li>
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-default navbar-btn" id="refresh-on" onclick="turnContinuousRefreshOn();">On</button>

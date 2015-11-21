@@ -22,8 +22,16 @@
   margin-bottom: 20px;
 }
 
-#ajax-test-helper-url, #ajax-test-helper-data {
-  min-width: 350px;
+#ajax-test-helper-url {
+  min-width: 200px;
+}
+
+#ajax-test-helper-data {
+  min-width: 400px;
+}
+
+#ajax-test-helper-refresh-rate {
+  width: 60px;
 }
 
 #ajax-helper-text-container p {
@@ -71,5 +79,8 @@
 
 #search_addresses {
   width: 65px;
-  margin-left: 10px;
+}
+
+.nav .form-group {
+  margin-right: 10px;
 }
