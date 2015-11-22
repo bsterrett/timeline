@@ -12,6 +12,10 @@ class Game < ActiveRecord::Base
 
   attr_accessor :game_ruleset
 
+  def self.in_progress
+    joins(%(JOIN `game_statuses` ON `games`.`game_status_id` = `game_statuses`.`id` AND `game_statuses`.`name` = 'in_progress'))
+  end
+
   def init_callback
     game_version = self.game_versions.create({ version: 0, starting_frame: 0, current_frame: 0 })
     update_attribute(:current_game_version, game_version)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151115084024) do
+ActiveRecord::Schema.define(version: 20151122022040) do
 
   create_table "base_types", force: :cascade do |t|
     t.string  "name",         limit: 255, null: false
@@ -131,12 +131,13 @@ ActiveRecord::Schema.define(version: 20151115084024) do
   add_index "map_troop_spawns", ["player_id"], name: "index_map_troop_spawns_on_player_id", using: :btree
 
   create_table "maps", force: :cascade do |t|
-    t.string   "name",              limit: 255,             null: false
-    t.string   "display_name",      limit: 255,             null: false
-    t.integer  "max_players",       limit: 4,   default: 2, null: false
-    t.integer  "max_player_towers", limit: 4,               null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.string   "name",              limit: 255,               null: false
+    t.string   "display_name",      limit: 255,               null: false
+    t.integer  "max_players",       limit: 4,     default: 2, null: false
+    t.integer  "max_player_towers", limit: 4,                 null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.text     "map_template",      limit: 65535
   end
 
   create_table "matches", force: :cascade do |t|

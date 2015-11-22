@@ -1,3 +1,2 @@
 web: bundle exec puma -C config/puma.rb
-
-workers Integer(ENV['WEB_CONCURRENCY'] || 2)
+worker: ADVANCE_CONTINUOUSLY=true bundle exec rake timeline:advance_worker

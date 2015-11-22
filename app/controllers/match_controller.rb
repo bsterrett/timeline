@@ -52,75 +52,8 @@ class MatchController < ApplicationController
 
     @match.users = users
 
-    @game = Game.new
-
-    @match.users.each do |user|
-      @game.players << user.create_player
-    end
-
-    @game.map = map
-
-
-    # TODO: Create map fabricator
-    #   should build a map and fixtures from a template
-    #   then it should populate the map with game pieces for all players
-
-    @game.players.each do |player|
-      player.map_base_spawns.create({
-        map: map,
-        location: 0,
-        position: 0
-      })
-
-      player.map_tower_spawns.create([{
-        map: map,
-        location: 5,
-        position: 0
-      },{
-        map: map,
-        location: 15,
-        position: 1
-      },{
-        map: map,
-        location: 25,
-        position: 2
-      }])
-
-      player.map_troop_spawns.create({
-        map: map,
-        location: 50,
-        position: 0
-      })
-    end
-
-    @game.players.each do |player|
-      player.map_base_spawns.each do |map_base_spawn|
-        base_attributes = {
-          base_type: BaseType.find(1)
-        }
-
-        map_base_spawn.spawn base_attributes
-      end
-    end
-
-    ruleset = GameRuleset.new
-    ruleset.max_players = @game.map.max_players || 2
-    ruleset.max_resources = 100000000000
-    ruleset.max_player_towers = @game.map.max_player_towers || 3
-    ruleset.max_troops = 1000
-    ruleset.max_frames = 100000000000
-    ruleset.frame_speed_modifier = 1
-    ruleset.resource_speed_modifier = 1
-    ruleset.troop_speed_modifier = 1
-    ruleset.base_health_modifier = 1
-    ruleset.fractional_health_constant = 1000.0
-    ruleset.handshake_bounded_acausal_actions = true
-    ruleset.rebase_to_oldest_frame_on_acausal_action = true
-    ruleset.freeze
-    @game.game_ruleset = ruleset
-
-    @game.game_status = GameStatus.find_by_name('not_started')
-    @game.save
+    gf = GameFabricator.new(@match, map)
+    @game = gf.call
 
     @match.game = @game
     @match.save

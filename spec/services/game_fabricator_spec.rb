@@ -115,21 +115,86 @@ describe GameFabricator do
       expect{ game_fabricator.call }.to change(game_fabricator, :frozen?).from(false).to(true)
     end
 
-    it 'does not require players if a match is provided'
-    it 'does not require players if users are provided'
-    it 'does not require users if players are provided'
-    it 'does not require a match'
+    it 'does not require players if a match is provided' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to_not raise_error
+    end
 
-    it 'should not change the number of users'
-    it 'should not change the number of maps'
-    it 'should not change the number of matches'
+    context 'it does not require a match and ' do
+      it 'does not require players if users are provided' do
+        game_fabricator = build(:game_fabricator)
+        game_fabricator.map = create(:map, max_players: 2)
+        game_fabricator.users = create_list(:user, 2)
+        expect{ game_fabricator.call }.to_not raise_error
+      end
 
-    it 'should change the number of games'
+      it 'does not require users if players are provided' do
+        game_fabricator = build(:game_fabricator)
+        game_fabricator.map = create(:map, max_players: 2)
+        game_fabricator.players = create_list(:player, 2)
+        expect{ game_fabricator.call }.to_not raise_error
+      end
+    end
+
+    it 'should not change the number of users' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to_not change(User, :count)
+    end
+
+    it 'should not change the number of maps' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to_not change(Map, :count)
+    end
+
+    it 'should not change the number of matches' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to_not change(Match, :count)
+    end
+
+    it 'should change the number of games' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to change(Game, :count)
+    end
+
     it 'should change the number of game rulesets'
-    it 'should change the number of map base spawns'
-    it 'should change the number of map tower spawns'
-    it 'should change the number of map troop spawns'
-    it 'should change the number of bases'
+
+    it 'should change the number of map base spawns' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to change(MapBaseSpawn, :count).by(2)
+    end
+
+    it 'should change the number of map tower spawns' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to change(MapTowerSpawn, :count).by(8)
+    end
+
+    it 'should change the number of map troop spawns' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to change(MapTroopSpawn, :count).by(2)
+    end
+
+    it 'should change the number of bases' do
+      game_fabricator = build(:game_fabricator)
+      game_fabricator.map = map = create(:map, max_players: 2)
+      game_fabricator.match = create(:match_with_users, user_count: 2)
+      expect{ game_fabricator.call }.to change(Base, :count).by(2)
+    end
 
     it 'should raise an error if no map is provided' do
       game_fabricator = build(:game_fabricator)
