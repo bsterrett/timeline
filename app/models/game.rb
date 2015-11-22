@@ -13,7 +13,7 @@ class Game < ActiveRecord::Base
   attr_accessor :game_ruleset
 
   def self.in_progress
-    joins(%(JOIN `game_statuses` ON `games`.`game_status_id` = `game_statuses`.`id` AND `game_statuses`.`name` = 'in_progress'))
+    joins(%(JOIN game_statuses ON games.game_status_id = game_statuses.id AND game_statuses.name = 'in_progress'))
   end
 
   def init_callback
