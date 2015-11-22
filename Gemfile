@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.2.3'
 
 gem 'rails', '4.2.4'
 gem 'rack-timeout'
@@ -6,14 +7,18 @@ gem 'sass-rails', '~> 5.0'
 gem 'bootstrap-sass'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
+gem 'jquery-rails'
+gem 'jquery-turbolinks'
+
 gem 'kgio'
 gem 'puma'
 
-# Use jquery as the JavaScript library
-gem 'jquery-rails'
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-# gem 'turbolinks'
-gem 'jquery-turbolinks'
+gem 'rack-mini-profiler'
+gem 'flamegraph'
+gem 'stackprof'
+gem 'memory_profiler'
+
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
 
@@ -33,6 +38,7 @@ end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'mysql2', '~> 0.3.18'
   gem 'byebug'
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails'
@@ -46,6 +52,4 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-
-  gem 'mysql2', '~> 0.3.18'
 end
