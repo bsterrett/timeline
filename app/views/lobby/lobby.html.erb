@@ -1,0 +1,67 @@
+<div class="container" id="lobby-container">
+<script>
+  function unreadySelf() {
+    $.ajax({
+      method: 'GET',
+      url: '/set_unready',
+      success: function(data) {
+        console.log(data);
+        // document.getElementById('lobby-container').innerHTML = data;
+      },
+      error: function(data) {
+        console.log(data);
+        console.log(data['responseText']);
+      }
+    });
+  }
+
+  function readySelf() {
+    $.ajax({
+      method: 'GET',
+      url: '/set_ready',
+      success: function(data) {
+        console.log(data);
+        // document.getElementById('lobby-container').innerHTML = data;
+      },
+      error: function(data) {
+        console.log(data);
+        console.log(data['responseText']);
+      }
+    });
+  }
+</script>
+  <% flash.each do |key, value| %>
+    <div class="alert alert-<%= key =~ /error/i ? 'danger' : key %>">
+      <%= value %>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-xs-6">
+      <h1>Ready users</h1>
+      <% Lobby.get_ready_users.each do |user| %>
+        <div class="row" style="background-color:<%= user[:color] %>">
+          <% if user[:id].to_i == current_user.id %>
+            <button id="unready-self" onclick="unreadySelf();" style="float:right;">Unready</button>
+          <% end %>
+          <h3><%= user[:proxy_username] %><% if user[:id].to_i == current_user.id %><small>(you)</small><% end %></h3>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-xs-6">
+      <h1>Unready users</h1>
+      <% Lobby.get_unready_users.each do |user| %>
+        <div class="row" style="background-color:<%= user[:color] %>">
+          <% if user[:id].to_i == current_user.id %>
+            <button id="ready-self" onclick="readySelf();" style="float:right;">Ready</button>
+          <% end %>
+          <h3><%= user[:proxy_username] %><% if user[:id].to_i == current_user.id %><small>(you)</small><% end %></h3>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+
+  </div>
+</div>

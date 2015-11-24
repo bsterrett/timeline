@@ -11,7 +11,14 @@ Rails.application.routes.draw do
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
-  get '/' => 'play#index'
+  resources :user_sessions, only: [:create, :destroy]
+
+  delete '/sign_out', to: 'user_sessions#destroy', as: :sign_out
+  get '/sign_in', to: 'user_sessions#new', as: :sign_in
+
+  get '/' => 'lobby#index'
+  get '/set_ready' => 'lobby#set_user_ready'
+  get '/set_unready' => 'lobby#set_user_unready'
 
   post '/match' => 'match#create'
   get '/match(/:id)' => 'match#show'
@@ -21,10 +28,6 @@ Rails.application.routes.draw do
 
   get 'match/:match_id/begin' => 'match#begin'
   get 'begin' => 'match#begin'
-
-  # get 'match/:match_id/player/:player_id/action/:player_action_type'  => 'play#create_player_action'
-  # get 'player/:player_id/action/:player_action_type'  => 'play#create_player_action'
-  # get 'action/:player_action_type'  => 'play#create_player_action'
 
   post 'match/:match_id/player/:player_id/action/:player_action_type'  => 'player_action#create'
   post 'player/:player_id/action/:player_action_type'  => 'player_action#create'

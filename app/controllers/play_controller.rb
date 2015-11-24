@@ -1,10 +1,5 @@
 class PlayController < ApplicationController
   skip_before_action :verify_authenticity_token
-  layout 'application'
-
-  def index
-    render :timelinegame
-  end
 
   def advance_game
     begin
@@ -12,7 +7,7 @@ class PlayController < ApplicationController
     rescue ActiveRecord::RecordNotFound => e
       Rails.logger.error "PLAY CONTROLLER ERROR #{e.message}\n\n#{e.backtrace}"
       flash.now[:errors] = e.message.to_s
-      render :timelinegame, layout: false, status: 500 and return
+      render :timelinegame, status: 500 and return
     end
     @game = @match.game
 

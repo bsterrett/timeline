@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :player do
     resources '1000'
+    color '#000000'
     username
 
     trait :with_spawns do

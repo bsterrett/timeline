@@ -3,5 +3,6 @@ FactoryGirl.define do
 
   factory :user do
     username
+    color '#000000'
   end
 end

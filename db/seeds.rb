@@ -49,9 +49,9 @@ maps = Map.create([
 ])
 
 users = User.create([
-  { username: 'ben_the_conqueror' },
-  { username: 'maverick' },
-  { username: 'bane' }
+  { username: 'ben_the_conqueror', color: '#E70E0E' },
+  { username: 'maverick', color: '#228BFF' },
+  { username: 'bane', color: '#151617' }
 ])
 
 puts "Or not."
