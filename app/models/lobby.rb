@@ -9,10 +9,13 @@ class Lobby
         :id, user.id,
         :username, user.username,
         :proxy_username, proxy_username,
-        :color, user.color
+        :color, user.color,
+        :updated, Time.now.to_i
       )
+      redis.expire("user:#{user.id}", 10.minute.to_i)
 
       redis.sadd('user-ids', user.id)
+      redis.expire('user-ids', 10.minute.to_i)
 
       unless redis.sismember('ready-user-ids', user.id)
         set_user_unready user
@@ -49,12 +52,14 @@ class Lobby
 
     def set_user_ready user
       redis.sadd('ready-user-ids', user.id)
+      redis.expire('ready-user-ids', 10.minute.to_i)
       redis.srem('unready-user-ids', user.id)
     end
 
     def set_user_unready user
       redis.srem('ready-user-ids', user.id)
       redis.sadd('unready-user-ids', user.id)
+      redis.expire('unready-user-ids', 10.minute.to_i)
     end
 
     def get_ready_users

@@ -11,6 +11,6 @@ class User < ActiveRecord::Base
 
   private
   def randomize_color
-    self.color = "#%06x" % (rand * 0xffffff)
+    self.color = "#%02x%02x%02x" % [(rand * 0xff),(rand * 0xff),(rand * 0xff)]
   end
 end
