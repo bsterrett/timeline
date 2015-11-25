@@ -148,7 +148,7 @@ class GameFabricator
     @players.each do |player|
       player.map_base_spawns.each do |map_base_spawn|
         base_attributes = {
-          base_type: BaseType.find(1)
+          base_type: BaseType.find_by(name: 'fortress')
         }
 
         map_base_spawn.spawn base_attributes
